@@ -12,8 +12,17 @@ SCOPED_CREDS = CREDS.with_scopes(SCOPE)
 GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('medication_inventory')
 
-inventory = SHEET.worksheet('inventory')
 
-data = inventory.get_all_values()
+def get_login():
+    """
+    Login required to enable system to start, and an added saftey measure for the BTM safe"
+    """
+    print("Please enter the pin to start the program.")
+    print("Enter the 4 pin number now\n")
+    print("Watch for spaces between numbers\n")
 
-print(data)
+    data_str = input("Enter your pin here: ")
+
+    print("You are now logged in")
+
+get_login()
