@@ -64,13 +64,15 @@ class PatientInformation:
     """
     Patient Information Class
     """
-    def __init__(self, patient_id, patient_name, patient_birthdate):
+    def __init__(self, patient_id, patient_name, patient_surname, patient_birthdate, room_bett_number):
         self.patient_id = patient_id
         self.patient_name = patient_name
+        self.patient_surname = patient_surname
         self.patient_birthdate = patient_birthdate
+        self.room_bett_number = room_bett_number
 
     def description(self):
-        return f"Patient with ID {self.patient_id} is {self.patient_name} "
+        return f"Patient with ID {self.patient_id}, {self.patient_name}, {self.patient_surname} {self.room_bett_number} "
 
 def get_patient_info(worksheet):
     """
@@ -79,7 +81,7 @@ def get_patient_info(worksheet):
     patients = []
     data = worksheet.get_all_values()[1:]
     for row in data:
-        patient = PatientInformation(row[0], row[1], row[2])
+        patient = PatientInformation(row[0], row[1], row[2], row[3], row[4])
         patients.append(patient)
     return patients
 
@@ -101,11 +103,13 @@ def search_patient(patients):
 
 def add_new_patient(worksheet):
     patient_id = input("Enter patient ID: ")
-    patient_name = input("Enter patient name: ")
-    patient_birthdate = input("Enter patient birthdate (YYYY-MM-DD): ")
+    patient_name = input("Enter patients name: ")
+    patient_surname = input("Enter patients surname: ")
+    patient_birthdate = input("Enter patients birthdate (DD-MM-YYYY): ")
+    patient_room_bed_number = input("Enter the room number(XXX): ")
     
-    new_patient = PatientInformation(patient_id, patient_name, patient_birthdate)
-    worksheet.append_row([new_patient.patient_id, new_patient.patient_name, new_patient.patient_birthdate])
+    new_patient = PatientInformation(patient_id, patient_name, patient_birthdate, patient_room_bed_number)
+    worksheet.append_row([new_patient.patient_id, new_patient.patient_name, new_patient.patient_birthdate, new_patient.room_bett_number])
     print(f"New patient added: {new_patient.description()}")
 
 def patient_information_system():
