@@ -76,13 +76,55 @@ def get_patient_info(worksheet):
     """
     Retrieve Patient information from the worksheet
     """
-    patient = []
+    patients = []
     data = worksheet.get_all_values()[1:]
     for row in data:
         patient = PatientInformation(row[0], row[1], row[2])
         patients.append(patient)
     return patients
 
+def display_patient_menu():
+    print("\nPatient Information Menu: ")
+    print("1. View all Patients")
+    print("2. Search for a Patient")
+    print("3. Add a new Patient")    
+    print("4. Return to main Menu")
+
+def search_patient(patients):
+    search_term = input("Enter patient ID or name to search: ").lower()
+    found_patients = [p for p in patients if search_term in p.patient_id.lower() or search_term in p.patient_name.lower()]
+    if found_patients:
+        for patient in found_patients:
+            print(patient.description())
+    else:
+        print("No matching patients found.")
+
+def add_new_patient(worksheet):
+    patient_id = input("Enter patient ID: ")
+    patient_name = input("Enter patient name: ")
+    patient_birthdate = input("Enter patient birthdate (YYYY-MM-DD): ")
+    
+    new_patient = PatientInformation(patient_id, patient_name, patient_birthdate)
+    worksheet.append_row([new_patient.patient_id, new_patient.patient_name, new_patient.patient_birthdate])
+    print(f"New patient added: {new_patient.description()}")
+
+def patient_information_system():
+    patients = get_patient_info(WORKSHEETS["patient_information"])
+    while True:
+        display_patient_menu()
+        choice = input("Enter your choice (1-4): ")
+        if choice == '1':
+            for patient in patients:
+                print(patient.description())
+        elif choice == '2':
+            search_patient(patients)
+        elif choice == '3':
+            add_new_patient(WORKSHEETS["patient_information"])
+            patients = get_patient_info(WORKSHEETS["patient_information"])  # Refresh patient list
+        elif choice == '4':
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
 def main():
     logging.info("Application started")
@@ -94,7 +136,9 @@ def main():
         patients = get_patient_info(WORKSHEETS["patient_information"])
 
         for patient in patients:
-            print(patient.description())        
+            print(patient.description())
+
+        patient_information_system()
     else:
         logging.error("Login failed. Exiting the application.")
         print("Login failed. Exiting the application.")    
