@@ -20,6 +20,7 @@ WORKSHEETS = {
     "guidelines": SHEET.worksheet("guidelines")
 }
 
+
 def validate_pin(entered_pin, worksheet):
     """
     Validation check of the pin to gain access into the system.
@@ -31,27 +32,39 @@ def validate_pin(entered_pin, worksheet):
         return True
     return False   
 
-def get_login():
+def get_login(max_attempts=3):
     """
     Login required to enable system to start, and an added safety measure for the BTM safe
+    Allows up to 3 login attempts.
     """
-    print("Please enter the pin to start the program.")
-    print("Enter the 4 pin number now\n")
-    print("Watch for spaces between numbers\n")
+    attempts = 0
+    while attempts < max_attempts:
+        print(f"\nAttempt {attempts + 1} of {max_attempts}")
+        print("Please enter the pin to start the program.")
+        print("Enter the 4 pin number now\n")
+        print("Watch for spaces between numbers\n")
 
-    data_str = input("Enter your pin here: ")
+        data_str = input("Enter your pin here: ")
 
-    if validate_pin(data_str, WORKSHEETS["nurse_pin"]):
-        print("You are now logged in")
-        return True
+        if validate_pin(data_str, WORKSHEETS["nurse_pin"]):
+            print("You are now logged in")
+            return True
+        else:
+            print("Invalid pin entry, please try again .. \n")
+            attempts += 1
+
+    print("Maximum login attempts reached. Access denied.")
+    return False        
+
+def main():
+    if get_login():
+        print("Access granted. Proceeding with the application... \n")
     else:
-        print("Invalid pin entry, please try again .. \n")
-        return False
-        
+        print("Login failed. Exiting the application.")    
 
 if __name__ == "__main__":
     try:
-        get_login()
+        main()
     except KeyboardInterrupt:
         # Handle the keyboard interrupt exception when the user presses Ctrl+C
         print("\nApplication terminated by user. Quitting the application...")
