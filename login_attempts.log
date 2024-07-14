@@ -1,0 +1,10 @@
+2024-07-14 17:16:00 - Application started
+2024-07-14 17:16:08 - Login failed. Exiting the application.
+2024-07-14 17:17:25 - Application started
+2024-07-14 17:18:11 - Login failed. Exiting the application.
+2024-07-14 17:32:03 - Application started
+2024-07-14 17:32:03 - Login attempt 1 of 3
+2024-07-14 17:32:09 - PIN validation attempt: Success
+2024-07-14 17:32:09 - Login successful
+2024-07-14 17:32:09 - Access granted. Proceeding with the application.
+2024-07-14 17:32:10 - An unexpected error occurred: name 'patients' is not defined

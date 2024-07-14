@@ -60,11 +60,41 @@ def get_login(max_attempts=3):
     print("Maximum login attempts reached. Access denied.")
     return False        
 
+class PatientInformation:
+    """
+    Patient Information Class
+    """
+    def __init__(self, patient_id, patient_name, patient_birthdate):
+        self.patient_id = patient_id
+        self.patient_name = patient_name
+        self.patient_birthdate = patient_birthdate
+
+    def description(self):
+        return f"Patient with ID {self.patient_id} is {self.patient_name} "
+
+def get_patient_info(worksheet):
+    """
+    Retrieve Patient information from the worksheet
+    """
+    patient = []
+    data = worksheet.get_all_values()[1:]
+    for row in data:
+        patient = PatientInformation(row[0], row[1], row[2])
+        patients.append(patient)
+    return patients
+
+
 def main():
     logging.info("Application started")
     if get_login():
         logging.info("Access granted. Proceeding with the application.")
         print("Access granted. Proceeding with the application... \n")
+
+        #Retreive Patient Information
+        patients = get_patient_info(WORKSHEETS["patient_information"])
+
+        for patient in patients:
+            print(patient.description())        
     else:
         logging.error("Login failed. Exiting the application.")
         print("Login failed. Exiting the application.")    
