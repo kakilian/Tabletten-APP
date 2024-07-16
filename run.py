@@ -130,6 +130,29 @@ def patient_information_system():
         else:
             print("Invalid choice. Please try again.")
 
+class MedicationInvertory:
+    """
+    Creates medication Class
+    """
+    def __init__(self, medication_name, strength, form, quantity_in_stock, reorder_level, last_ordered_date, in_stock):
+        self.medication_name = medication_name
+        self.strength = strength
+        self.form = form
+        self.quantity_in_stock = quantity_in_stock
+        self.reorder_level = reorder_level
+        self.last_ordered_date = last_ordered_date
+        self.in_stock = in_stock
+
+    def description(self):
+        """
+        Returns description string including instance attributes
+        
+        """    
+        return f'list of medication in invertory, as follows: {self.medication}\n {self.strength}\n {self.form}\n {self.quantity_in_stock}'
+        print("Please type which medication and amount is required ...\n")
+
+def medication()        
+
 def main():
     logging.info("Application started")
     if get_login():
@@ -146,6 +169,12 @@ def main():
     else:
         logging.error("Login failed. Exiting the application.")
         print("Login failed. Exiting the application.")    
+
+        #Retrieve Medication Information
+        medication = get_medication_information(WORKSHEETS["inventory"])
+
+        for inventory in inventorys:
+            print(inventory.description)
 
 if __name__ == "__main__":
     try:
