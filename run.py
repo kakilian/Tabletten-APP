@@ -151,7 +151,16 @@ class MedicationInvertory:
         return f'list of medication in invertory, as follows: {self.medication}\n {self.strength}\n {self.form}\n {self.quantity_in_stock}'
         print("Please type which medication and amount is required ...\n")
 
-def medication()        
+def get_medication_information(worksheet):
+    medications = []
+    data = worksheet.get_all_values()[1:]
+    for row in data:
+        medication =
+MedicationInventory(row[0], row[1], row[2], row[3], row[4], row[5], row[6] == True)
+        medication.append(medication)
+    return medications        
+
+
 
 def main():
     logging.info("Application started")
