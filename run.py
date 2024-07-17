@@ -130,7 +130,7 @@ def patient_information_system():
         else:
             print("Invalid choice. Please try again.")
 
-class MedicationInvertory:
+class MedicationInventory:
     """
     Creates medication Class
     """
@@ -138,8 +138,8 @@ class MedicationInvertory:
         self.medication_name = medication_name
         self.strength = strength
         self.form = form
-        self.quantity_in_stock = quantity_in_stock
-        self.reorder_level = reorder_level
+        self.quantity_in_stock = int(quantity_in_stock)
+        self.reorder_level = int(reorder_level)
         self.last_ordered_date = last_ordered_date
         self.in_stock = in_stock
 
@@ -147,18 +147,70 @@ class MedicationInvertory:
         """
         Returns description string including instance attributes
         
-        """    
-        return f'list of medication in invertory, as follows: {self.medication}\n {self.strength}\n {self.form}\n {self.quantity_in_stock}'
+        """  
+        def description(self):
+        return f"{self.medication_name} - {self.strength} {self.form}, In stock: {self.quantity_in_stock}"
+        
+        def full_details(self):
+            return f"list of medication in inventory, as follows: {self.medication}\nStrength: {self.strength}\nForm: {self.form}\nQuantity in stock: {self.quantity_in_stock}\nLast ordered: {self.last_ordered_date}\nIn stock: {'Yes' if self.in_stock else 'No'}"
         print("Please type which medication and amount is required ...\n")
 
 def get_medication_information(worksheet):
     medications = []
     data = worksheet.get_all_values()[1:]
     for row in data:
-        medication =
-MedicationInventory(row[0], row[1], row[2], row[3], row[4], row[5], row[6] == True)
+        medication = MedicationInventory(row[0], row[1], row[2], row[3], row[4], row[5], row[6] == True)
         medication.append(medication)
-    return medications        
+    return medications  
+
+def medication_inventory_system():
+    medications = get_medication_information(WORKSHEETS["inventory"])
+    while True:
+        display_medication_menu()
+        choice = input("Enter your choice (1-4): ")
+        if choice == '1':
+            for med in medications:
+                print(med.description())
+            elif choice == '2':
+                search_medication(medications)
+            elif choice == '3':
+
+add_new_medication(WORKSHEETS["inventory"])
+                medications = get_medication_information(WORKSHEETS["inventory"]) 
+                elif choice == '4':
+                    break
+                else:
+                    print("Invalid choice. Please tra again.")
+
+def display_medication_menu():
+    print("\nMedication Inventory Menu: ")
+    print("1. View all Medications ")
+    print("2. Search for a Medication ")
+    print("3. Add a new Medication ")
+    print("4. Return to the main menu ")
+
+def search_medication(medications):
+    search_term = input("Enter medication namd or strength to searc: ").lower()
+    found_medications = [m for m in medications if search_term in m-medication_name.lower() or search_term in m.strength.lower()]
+        if found_medications:
+            for med in found_medications:
+                print(med.description())
+            else:
+                print("No matching medications found.")
+
+def add_new_medication(worksheet):
+    name = input("Enter medication name: ")
+    strength = input("Enter strength: ")
+    form = input("Enter form: ")
+    quantity = int(input("Enter quantity in stock: "))
+    reorder_level = int(input("Enter reoder level: "))
+    last_ordered_date = input("Enter last ordered date (DD-MM-YYY): ")
+    in_stock = input("Is it in stock? (yes/no):").lower()== 'yes'
+
+    new_med = MedicationInventory(name, strength, form, quantity, reorder_level, last_ordered_date, in_stock)
+
+worksheet.append_row([new_med.medication_name, new_med.strength, new_med.form, new_med.quantity_in_stock, new_med.reorder_level, new_med.last_ordered_date, str(new_med.in_stock).upper()])
+    print(f"New medication added: {new_med.description()}")
 
 
 
