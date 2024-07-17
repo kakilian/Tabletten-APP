@@ -212,24 +212,87 @@ def add_new_medication(worksheet):
 worksheet.append_row([new_med.medication_name, new_med.strength, new_med.form, new_med.quantity_in_stock, new_med.reorder_level, new_med.last_ordered_date, str(new_med.in_stock).upper()])
     print(f"New medication added: {new_med.description()}")
 
-
-
 def main():
     logging.info("Application started")
     if get_login():
         logging.info("Access granted. Proceeding with the application.")
         print("Access granted. Proceeding with the application... \n")
 
-        #Retreive Patient Information
-        patients = get_patient_info(WORKSHEETS["patient_information"])
+        while True:
+            print("\nMain Menu:")
+            print("1. Patient Information System")
+            print("2. Medication Inventory System")
+            print("3. Administer Medication")
+            print("4. Guidelines")
+            print("5. Exit")
+            choice = input("Enter your choice (1-5): ")
 
-        for patient in patients:
-            print(patient.description())
-
-        patient_information_system()
+            if choice == '1':
+                patient_information_system()
+            elif choice == '2':
+                medication_inventory_system()
+            elif choice == '3':
+                selected_patient = patient_information_system()
+                if selected_patient:
+                    medications = get_medication_information(WORKSHEETS["inventory"])
+administer_medication(selected_patient, medications)
+            elif choice == '4':
+                guidelines_system()
+            elif choice =='5':
+                print("Exiting the application.")
+                break
+            else:
+                print("Invalid choice. Please try again.")            
     else:
         logging.error("Login failed. Exiting the application.")
-        print("Login failed. Exiting the application.")    
+        print("Login failed. Exiting the application.")  
+"""
+Here added guidelines from WHO, for medication. 
+"""
+def guidelines_system():
+    guidelines = get_guidelines(WORKSHEETS["guidelines"])
+        while True:
+            print("\nGuidelines Menu:")
+            print("1. View all Guidelines")
+            print("2. Search Guidelines")
+            print("3. Return to Main Menu")
+            choice = input("Enter your choice (1-3): ")
+
+            if choice == '1':
+                display_all_guidelines(guidelines)
+            elif choice == '2':
+                search_guidelines(guidelines)
+            elif choice == '3':
+                break
+            else:
+                print("Invalid choice. Please try again.")
+
+def get_guidelines(worksheet):
+    guidelines = []
+    data = worksheet.get_all_values()[1:]
+    for row in data:
+        guidelines = {
+            'medication_name': row[0],
+            'administration_guidelines': row[1],
+            'dosage_guidelines': row[2],
+            'intervals': row[3],
+            'potential_side_effects': row[4],
+            'emergency_procedures': row[5],
+            'additional_notes': row[6]
+            }
+        guildines.append(guideline)
+    return guidelines
+
+def display_guideline(guideline):
+    print(f"\nMedication Name: {guideline['medication_name']}")
+    print(f"Administration Guidelines: {guideline['administration_guidelines']}")
+    print(f"Dosage Guidelines: {guideline['dosage_guidelines']}")
+    print(f"Intervals: {guideline['intervals']}")
+    print(f"Potential Side Effects: {guideline['potential_side_effects']}")
+    print(f"Emergency Procedures: {guideline['emergency_procedures']}")
+    print(f"Additional Notes: {guideline['additional_notes']}")
+    print("-" * 50)
+
 
         #Retrieve Medication Information
         medication = get_medication_information(WORKSHEETS["inventory"])
