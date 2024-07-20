@@ -7,7 +7,7 @@ logging.basicConfig(
     filename='login_attempts.log',
     level=logging.INFO,
     format='%(asctime)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    datefmt='%d-%m-%Y %H:%M:%S'
 )
 
 SCOPE = [
@@ -209,11 +209,12 @@ def search_medication(medications):
     Searching Menu to find the neccessary Medication
     
     """
-    search_term = input("Enter medication name or strength to search: ").lower()
+    search_term = input("Enter medication name or strength to search:(XX)mg ").lower()
     found_medications = [m for m in medications if search_term in m.medication_name.lower() or search_term in m.strength.lower()]
     if found_medications:
         for med in found_medications:
             print(med.description())
+           
     else:
         print("No matching medications found.")
 
