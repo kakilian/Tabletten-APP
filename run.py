@@ -248,16 +248,50 @@ class MatchingPatientsWithMedication:
         self.guidelines = guidelines
 
         def full_details(self):
-            return f"Patient list, Surname:{self.patient_surname}First Name{self.patient_name}\nBirthdate:{self.self.patient_birthdate}\nID: {self.patient_id}\nMedication: {self.medication_name}\nAmount: {self.medication_quantity}\nMedication Dosage: {self.medication_strength}\nGuidelines: {self.guidelines}\n"
+            return f"Patient list, Surname:{self.patient_surname}First Name{self.patient_name}\nBirthdate:{self.self.patient_birthdate}\nID: {self.patient_id}\nMedication: {self.medication_name}\nQuantity: {self.medication_quantity}\nMedication Dosage: {self.medication_strength}\nGuidelines: {self.guidelines}\n"
+
+def administer_medication(patients, medications):
+    patient_surname = input("Enter patient surname: ")
+    found_patients = [p for p in patients if patient_surname.lower() in p.patient_surname.lower()]
+    
+    if not found_patients:
+        print("No patients found with that surname.")
+        return
+
+    print("\nMatching patients:")
+    for idx, patient in enumerate(found_patients, start=1):
+        print(f"{idx}. {patient.description()}")
+
+    medication_name = input("Enter the name of the medication required: ")
+    matching_medications = [m for m in medications if medication_name.lower() in m.medication_name.lower()]
+
+    if not matching_medications:
+        print("No matching medications found.")
+        return
+
+    print("\nMatching medications:")
+    for idx, med in enumerate(matching_medications, start=1):
+        print(f"{idx}. {med.description()}")
+
+    med_choice = int(input("Enter the medication number: ")) - 1
+    if 0 <= med_choice < len(matching_medications):
+        selected_medication = matching_medications[med_choice]
+        quantity = int(input("Enter the quantity to administer: "))
+        
+        print(f"\nAdministering {quantity} of {selected_medication.medication_name} to {selected_patient.patient_name} {selected_patient.patient_surname}")
+        
+        log_administration(selected_patient, selected_medication, quantity)
+    else:
+        print("Invalid medication selection.")
 
 
 
-def main():0
-logging.info("Application started")
-if get_login():
-    logging.info("Access granted. Proceeding with the application.")
-    print("Access granted. Proceeding with the application... \n")
-    while True:
+def main():
+    logging.info("Application started")
+    if get_login():
+        logging.info("Access granted. Proceeding with the application.")
+        print("Access granted. Proceeding with the application... \n")
+        while True:
             print("\nMain Menu:")
             print("1. Patient Information System")
             print("2. Medication Inventory System")
@@ -270,10 +304,9 @@ if get_login():
             elif choice == '2':
                 medication_inventory_system()
             elif choice == '3':
-                selected_patient = patient_information_system()
-                if selected_patient:
-                    medications = get_medication_information(WORKSHEETS["inventory"])
-                    administer_medication(selected_patient, medications)
+                patients = get_patient_info(WORKSHEETS["patient_information"])
+                medications = get_medication_information(WORKSHEETS["inventory"])
+                administer_medication(patients, medications)
             elif choice == '4':
                 guidelines_system()
             elif choice == '5':
@@ -284,6 +317,7 @@ if get_login():
     else:
         logging.error("Login failed. Exiting the application.")
         print("Login failed. Exiting the application.")
+
 
 if __name__ == "__main__":
     try:
