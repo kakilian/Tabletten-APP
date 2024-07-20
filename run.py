@@ -251,16 +251,35 @@ class MatchingPatientsWithMedication:
             return f"Patient list, Surname:{self.patient_surname}First Name{self.patient_name}\nBirthdate:{self.self.patient_birthdate}\nID: {self.patient_id}\nMedication: {self.medication_name}\nQuantity: {self.medication_quantity}\nMedication Dosage: {self.medication_strength}\nGuidelines: {self.guidelines}\n"
 
 def administer_medication(patients, medications):
-    patient_surname = input("Enter patient surname: ")
+    """
+    Entering the Patients surname, medication name, and amount here required.
+    """
+    patient_surname = input("Enter patient surname(lowercase only): ")
     found_patients = [p for p in patients if patient_surname.lower() in p.patient_surname.lower()]
     
     if not found_patients:
         print("No patients found with that surname.")
         return
 
-    print("\nMatching patients:")
-    for idx, patient in enumerate(found_patients, start=1):
-        print(f"{idx}. {patient.description()}")
+    if len(found_patients) == 1:
+        selected_patient = found_patients[0]
+    else:
+        print("\nMultiple patients found. Please select:")
+        for idx, patient in enumerate(found_patients, start=1):
+            print(f"{idx}. {patient.description()}")
+        
+        while True:
+            try:
+                patient_choice = int(input("Enter the patient number: ")) - 1
+                if 0 <= patient_choice < len(found_patients):
+                    selected_patient = found_patients[patient_choice]
+                    break
+                else:
+                    print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+
+    print(f"\nSelected patient: {selected_patient.description()}")
 
     medication_name = input("Enter the name of the medication required: ")
     matching_medications = [m for m in medications if medication_name.lower() in m.medication_name.lower()]
@@ -269,20 +288,42 @@ def administer_medication(patients, medications):
         print("No matching medications found.")
         return
 
-    print("\nMatching medications:")
-    for idx, med in enumerate(matching_medications, start=1):
-        print(f"{idx}. {med.description()}")
-
-    med_choice = int(input("Enter the medication number: ")) - 1
-    if 0 <= med_choice < len(matching_medications):
-        selected_medication = matching_medications[med_choice]
-        quantity = int(input("Enter the quantity to administer: "))
-        
-        print(f"\nAdministering {quantity} of {selected_medication.medication_name} to {selected_patient.patient_name} {selected_patient.patient_surname}")
-        
-        log_administration(selected_patient, selected_medication, quantity)
+    if len(matching_medications) == 1:
+        selected_medication = matching_medications[0]
     else:
-        print("Invalid medication selection.")
+        print("\nMultiple medications found. Please select:")
+        for idx, med in enumerate(matching_medications, start=1):
+            print(f"{idx}. {med.description()}")
+        
+        while True:
+            try:
+                med_choice = int(input("Enter the medication number: ")) - 1
+                if 0 <= med_choice < len(matching_medications):
+                    selected_medication = matching_medications[med_choice]
+                    break
+                else:
+                    print("Invalid selection. Please try again.")
+            except ValueError:
+                print("Please enter a valid number.")
+
+    quantity = int(input("Enter the quantity to administer: "))
+    
+    print(f"\nAdministering amount of: {quantity} of: {selected_medication.medication_name} to: {selected_patient.patient_name} {selected_patient.patient_surname}")
+    
+    log_administration(selected_patient, selected_medication, quantity)
+
+def log_administration(patient, medication, quantity):
+    log_entry = [
+        datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+        patient.patient_id,
+        patient.patient_surname,
+        patient.patient_name,
+        medication.medication_name,
+        str(quantity),
+        medication.strength
+    ]
+    WORKSHEETS["medication_administration_logs"].append_row(log_entry)
+    print("Administration logged successfully.\n")
 
 
 

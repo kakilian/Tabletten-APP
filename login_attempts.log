@@ -1,0 +1,18 @@
+2024-07-20 12:29:49 - Application started
+2024-07-20 12:29:49 - Login attempt 1 of 3
+2024-07-20 12:29:53 - PIN validation attempt: Success
+2024-07-20 12:29:53 - Login successful
+2024-07-20 12:29:53 - Access granted. Proceeding with the application.
+2024-07-20 12:30:08 - An unexpected error occurred: name 'selected_patient' is not defined
+2024-07-20 12:46:53 - Application started
+2024-07-20 12:46:53 - Login attempt 1 of 3
+2024-07-20 12:46:55 - PIN validation attempt: Success
+2024-07-20 12:46:55 - Login successful
+2024-07-20 12:46:55 - Access granted. Proceeding with the application.
+2024-07-20 12:48:53 - An unexpected error occurred: name 'selected_patient' is not defined
+2024-07-20 12:57:41 - Application started
+2024-07-20 12:57:41 - Login attempt 1 of 3
+2024-07-20 12:57:44 - PIN validation attempt: Success
+2024-07-20 12:57:44 - Login successful
+2024-07-20 12:57:44 - Access granted. Proceeding with the application.
+2024-07-20 13:04:13 - Application terminated by user.
