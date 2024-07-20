@@ -239,11 +239,17 @@ class MatchingPatientsWithMedication:
     """
     def __init__(self, patient_surname, patient_name, patient_birthdate, patient_id, medication_name, medication_quantity, medication_strength, guidelines):
         self.patient_surname = patient_surname
+        self.patient_name = patient_name
         self.patient_birthdate = patient_birthdate
         self.patient_id = patient_id
+        self.medication_name = medication_name
         self.medication_quantity = medication_quantity
         self.medication_strength = medication_strength
         self.guidelines = guidelines
+
+        def full_details(self):
+            return f"Patient list, Surname:{self.patient_surname}First Name{self.patient_name}\nBirthdate:{self.self.patient_birthdate}\nID: {self.patient_id}\nMedication: {self.medication_name}\nAmount: {self.medication_quantity}\nMedication Dosage: {self.medication_strength}\nGuidelines: {self.guidelines}\n"
+
 
 
 def main():0
