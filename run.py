@@ -3,9 +3,12 @@ from google.oauth2.service_account import Credentials
 import logging
 from datetime import datetime
 
-# Set up logging
-logging.basicConfig(filename='login_attempts.log', level=logging.INFO,
-                    format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(
+    filename='login_attempts.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -27,17 +30,14 @@ WORKSHEETS = {
 }
 
 def validate_pin(entered_pin, worksheet):
-    """
-    Validation check of the pin to gain access into the system.
-    """
-    pin_data = worksheet.col_values(2)[1:]  
+    """Validation check of the pin to gain access into the system."""
+    pin_data = worksheet.col_values(2)[1:]
     logging.info(f"PIN validation attempt: {'Success' if entered_pin in pin_data else 'Failure'}")
     return entered_pin in pin_data
 
 def get_login(max_attempts=3):
     """
-    Login required to enable system to start, and an added safety measure for the BTM safe
-    Allows up to 3 login attempts.
+    Login required to enable system to start, and an added safety measure for the BTM safe. Allows up to 3 login attempts.
     """
     attempts = 0
     while attempts < max_attempts:
@@ -45,34 +45,31 @@ def get_login(max_attempts=3):
         print(f"\nAttempt {attempts + 1} of {max_attempts}")
         print("Please enter the 4 number pin to start the program.")
         print("Watch for spaces between numbers\n")
-
         data_str = input("Enter your pin here: ")
-
         if validate_pin(data_str, WORKSHEETS["nurse_pin"]):
             logging.info("Login successful")
             return True
         else:
             logging.warning("Invalid PIN entry")
             print("Invalid pin entry, please try again .. \n")
-            attempts += 1
-
+        attempts += 1
     logging.error("Maximum login attempts reached. Access denied.")
     print("Maximum login attempts reached. Access denied.")
-    return False        
+    return False
 
 class PatientInformation:
     """
     Patient Information Class
     """
-    def __init__(self, patient_id, patient_name, patient_surname, patient_birthdate, room_bett_number):
+    def __init__(self, patient_id, patient_name, patient_surname, patient_birthdate, room_bed_number):
         self.patient_id = patient_id
         self.patient_name = patient_name
         self.patient_surname = patient_surname
         self.patient_birthdate = patient_birthdate
-        self.room_bett_number = room_bett_number
+        self.room_bed_number = room_bed_number
 
     def description(self):
-        return f"Patient with ID {self.patient_id}, {self.patient_name}, {self.patient_surname} {self.room_bett_number} "
+        return f"Patient with ID {self.patient_id}, {self.patient_name}, {self.patient_surname}, Room {self.room_bed_number}"
 
 def get_patient_info(worksheet):
     """
@@ -86,13 +83,16 @@ def get_patient_info(worksheet):
     return patients
 
 def display_patient_menu():
-    print("\nPatient Information Menu: ")
+    print("\nPatient Information Menu:")
     print("1. View all Patients")
     print("2. Search for a Patient")
-    print("3. Add a new Patient")    
+    print("3. Add a new Patient")
     print("4. Return to main Menu")
 
 def search_patient(patients):
+    """
+    To be able to search for patients through - Patient ID, Patient Name, Paitent Birthdate.
+    """
     search_term = input("Enter patient ID or name to search: ").lower()
     found_patients = [p for p in patients if search_term in p.patient_id.lower() or search_term in p.patient_name.lower()]
     if found_patients:
@@ -102,17 +102,22 @@ def search_patient(patients):
         print("No matching patients found.")
 
 def add_new_patient(worksheet):
+    """
+    To add new Patients to the list.
+    """
     patient_id = input("Enter patient ID: ")
-    patient_name = input("Enter patients name: ")
-    patient_surname = input("Enter patients surname: ")
-    patient_birthdate = input("Enter patients birthdate (DD-MM-YYYY): ")
-    patient_room_bed_number = input("Enter the room number(XXX): ")
-    
-    new_patient = PatientInformation(patient_id, patient_name, patient_birthdate, patient_room_bed_number)
-    worksheet.append_row([new_patient.patient_id, new_patient.patient_name, new_patient.patient_birthdate, new_patient.room_bett_number])
+    patient_name = input("Enter patient's name: ")
+    patient_surname = input("Enter patient's surname: ")
+    patient_birthdate = input("Enter patient's birthdate (DD-MM-YYYY): ")
+    patient_room_bed_number = input("Enter the room number (XXX): ")
+    new_patient = PatientInformation(patient_id, patient_name, patient_surname, patient_birthdate, patient_room_bed_number)
+    worksheet.append_row([new_patient.patient_id, new_patient.patient_name, new_patient.patient_surname, new_patient.patient_birthdate, new_patient.room_bed_number])
     print(f"New patient added: {new_patient.description()}")
 
 def patient_information_system():
+    """
+    Management Section for Patients, to keep the Patients information up to Date.
+    """
     patients = get_patient_info(WORKSHEETS["patient_information"])
     while True:
         display_patient_menu()
@@ -124,7 +129,7 @@ def patient_information_system():
             search_patient(patients)
         elif choice == '3':
             add_new_patient(WORKSHEETS["patient_information"])
-            patients = get_patient_info(WORKSHEETS["patient_information"])  # Refresh patient list
+            patients = get_patient_info(WORKSHEETS["patient_information"]) 
         elif choice == '4':
             break
         else:
@@ -146,79 +151,107 @@ class MedicationInventory:
     def description(self):
         """
         Returns description string including instance attributes
-        
-        """  
-        def description(self):
+        """
         return f"{self.medication_name} - {self.strength} {self.form}, In stock: {self.quantity_in_stock}"
-        
-        def full_details(self):
-            return f"list of medication in inventory, as follows: {self.medication}\nStrength: {self.strength}\nForm: {self.form}\nQuantity in stock: {self.quantity_in_stock}\nLast ordered: {self.last_ordered_date}\nIn stock: {'Yes' if self.in_stock else 'No'}"
-        print("Please type which medication and amount is required ...\n")
+
+    def full_details(self):
+        return f"list of medication in inventory, as follows: {self.medication_name}\nStrength: {self.strength}\nForm: {self.form}\nQuantity in stock: {self.quantity_in_stock}\nLast ordered: {self.last_ordered_date}\nIn stock: {'Yes' if self.in_stock else 'No'}"
 
 def get_medication_information(worksheet):
+    """
+    Medication List of Inventory, what's in stock.
+    """
     medications = []
     data = worksheet.get_all_values()[1:]
     for row in data:
-        medication = MedicationInventory(row[0], row[1], row[2], row[3], row[4], row[5], row[6] == True)
-        medication.append(medication)
-    return medications  
+        medication = MedicationInventory(row[0], row[1], row[2], row[3], row[4], row[5], row[6].lower() == 'yes')
+        medications.append(medication)  
+    return medications
+
 
 def medication_inventory_system():
+    """
+    Menu for the Medication Inventory, whats in stock
+    """
     medications = get_medication_information(WORKSHEETS["inventory"])
     while True:
         display_medication_menu()
-        choice = input("Enter your choice (1-4): ")
+        choice = input("Enter your choice (1-5): ")
         if choice == '1':
             for med in medications:
                 print(med.description())
-            elif choice == '2':
-                search_medication(medications)
-            elif choice == '3':
-
-add_new_medication(WORKSHEETS["inventory"])
-                medications = get_medication_information(WORKSHEETS["inventory"]) 
-                elif choice == '4':
-                    break
-                else:
-                    print("Invalid choice. Please tra again.")
+        elif choice == '2':
+            search_medication(medications)
+        elif choice == '3':
+            new_med = add_new_medication(WORKSHEETS["inventory"])
+            medications.append(new_med)
+        elif choice == '4':
+            update_existing_medication(WORKSHEETS["inventory"], medications)
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
 def display_medication_menu():
-    print("\nMedication Inventory Menu: ")
-    print("1. View all Medications ")
-    print("2. Search for a Medication ")
-    print("3. Add a new Medication ")
-    print("4. Return to the main menu ")
+    """
+    Medication Menu
+    
+    """
+    print("\nMedication Inventory Menu:")
+    print("1. View all Medications")
+    print("2. Search for a Medication")
+    print("3. Add a new Medication")
+    print("4. Update existing Medication")
+    print("5. Return to the main menu")
 
 def search_medication(medications):
-    search_term = input("Enter medication namd or strength to searc: ").lower()
-    found_medications = [m for m in medications if search_term in m-medication_name.lower() or search_term in m.strength.lower()]
-        if found_medications:
-            for med in found_medications:
-                print(med.description())
-            else:
-                print("No matching medications found.")
+    """
+    Searching Menu to find the neccessary Medication
+    
+    """
+    search_term = input("Enter medication name or strength to search: ").lower()
+    found_medications = [m for m in medications if search_term in m.medication_name.lower() or search_term in m.strength.lower()]
+    if found_medications:
+        for med in found_medications:
+            print(med.description())
+    else:
+        print("No matching medications found.")
 
 def add_new_medication(worksheet):
+    """
+    To add new medication, Name, strength, form, quantity, reorder level, last ordered, in stock.
+    """
     name = input("Enter medication name: ")
     strength = input("Enter strength: ")
     form = input("Enter form: ")
     quantity = int(input("Enter quantity in stock: "))
-    reorder_level = int(input("Enter reoder level: "))
-    last_ordered_date = input("Enter last ordered date (DD-MM-YYY): ")
-    in_stock = input("Is it in stock? (yes/no):").lower()== 'yes'
-
+    reorder_level = int(input("Enter reorder level: "))
+    last_ordered_date = input("Enter last ordered date (DD-MM-YYYY): ")
+    in_stock = input("Is it in stock? (yes/no): ").lower() == 'yes'
     new_med = MedicationInventory(name, strength, form, quantity, reorder_level, last_ordered_date, in_stock)
-
-worksheet.append_row([new_med.medication_name, new_med.strength, new_med.form, new_med.quantity_in_stock, new_med.reorder_level, new_med.last_ordered_date, str(new_med.in_stock).upper()])
+    worksheet.append_row([new_med.medication_name, new_med.strength, new_med.form, new_med.quantity_in_stock, new_med.reorder_level, new_med.last_ordered_date, 'YES' if new_med.in_stock else 'NO'])
     print(f"New medication added: {new_med.description()}")
+    return new_med
 
-def main():
-    logging.info("Application started")
-    if get_login():
-        logging.info("Access granted. Proceeding with the application.")
-        print("Access granted. Proceeding with the application... \n")
+class MatchingPatientsWithMedication:
+    """
+    Patient registration for medication
+    """
+    def __init__(self, patient_surname, patient_name, patient_birthdate, patient_id, medication_name, medication_quantity, medication_strength, guidelines):
+        self.patient_surname = patient_surname
+        self.patient_birthdate = patient_birthdate
+        self.patient_id = patient_id
+        self.medication_quantity = medication_quantity
+        self.medication_strength = medication_strength
+        self.guidelines = guidelines
 
-        while True:
+
+def main():0
+logging.info("Application started")
+if get_login():
+    logging.info("Access granted. Proceeding with the application.")
+    print("Access granted. Proceeding with the application... \n")
+    while True:
             print("\nMain Menu:")
             print("1. Patient Information System")
             print("2. Medication Inventory System")
@@ -226,7 +259,6 @@ def main():
             print("4. Guidelines")
             print("5. Exit")
             choice = input("Enter your choice (1-5): ")
-
             if choice == '1':
                 patient_information_system()
             elif choice == '2':
@@ -235,43 +267,50 @@ def main():
                 selected_patient = patient_information_system()
                 if selected_patient:
                     medications = get_medication_information(WORKSHEETS["inventory"])
-administer_medication(selected_patient, medications)
+                    administer_medication(selected_patient, medications)
             elif choice == '4':
                 guidelines_system()
-            elif choice =='5':
+            elif choice == '5':
                 print("Exiting the application.")
                 break
             else:
-                print("Invalid choice. Please try again.")            
+                print("Invalid choice. Please try again.")
     else:
         logging.error("Login failed. Exiting the application.")
-        print("Login failed. Exiting the application.")  
-"""
-Here added guidelines from WHO, for medication. 
-"""
+        print("Login failed. Exiting the application.")
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        logging.warning("Application terminated by user.")
+        print("\nApplication terminated by user. Quitting the application...")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {str(e)}")
+        print(f"An unexpected error occurred: {str(e)}")
+
 def guidelines_system():
     guidelines = get_guidelines(WORKSHEETS["guidelines"])
-        while True:
-            print("\nGuidelines Menu:")
-            print("1. View all Guidelines")
-            print("2. Search Guidelines")
-            print("3. Return to Main Menu")
-            choice = input("Enter your choice (1-3): ")
-
-            if choice == '1':
-                display_all_guidelines(guidelines)
-            elif choice == '2':
-                search_guidelines(guidelines)
-            elif choice == '3':
-                break
-            else:
-                print("Invalid choice. Please try again.")
+    while True:
+        print("\nGuidelines Menu:")
+        print("1. View all Guidelines")
+        print("2. Search Guidelines")
+        print("3. Return to Main Menu")
+        choice = input("Enter your choice (1-3): ")
+        if choice == '1':
+            display_all_guidelines(guidelines)
+        elif choice == '2':
+            search_guidelines(guidelines)
+        elif choice == '3':
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
 def get_guidelines(worksheet):
     guidelines = []
     data = worksheet.get_all_values()[1:]
     for row in data:
-        guidelines = {
+        guideline = {
             'medication_name': row[0],
             'administration_guidelines': row[1],
             'dosage_guidelines': row[2],
@@ -279,9 +318,13 @@ def get_guidelines(worksheet):
             'potential_side_effects': row[4],
             'emergency_procedures': row[5],
             'additional_notes': row[6]
-            }
-        guildines.append(guideline)
+        }
+        guidelines.append(guideline)
     return guidelines
+
+def display_all_guidelines(guidelines):
+    for guideline in guidelines:
+        display_guideline(guideline)
 
 def display_guideline(guideline):
     print(f"\nMedication Name: {guideline['medication_name']}")
@@ -293,19 +336,11 @@ def display_guideline(guideline):
     print(f"Additional Notes: {guideline['additional_notes']}")
     print("-" * 50)
 
-
-        #Retrieve Medication Information
-        medication = get_medication_information(WORKSHEETS["inventory"])
-
-        for inventory in inventorys:
-            print(inventory.description)
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        logging.warning("Application terminated by user.")
-        print("\nApplication terminated by user. Quitting the application...")
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {str(e)}")
-        print(f"An unexpected error occurred: {str(e)}")
+def search_guidelines(guidelines):
+    search_term = input("Enter medication name or guideline to search: ").lower()
+    found_guidelines = [g for g in guidelines if search_term in g['medication_name'].lower()]
+    if found_guidelines:
+        for guideline in found_guidelines:
+            display_guideline(guideline)
+    else:
+        print("No matching guidelines found.")
