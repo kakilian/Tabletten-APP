@@ -1,5 +1,7 @@
 import logging
 from datetime import datetime
+import logging
+from nurse import get_nurses_from_sheet, validate_pin
 import gspread
 from google.oauth2.service_account import Credentials
 from colorama import Fore, Back, Style
@@ -37,42 +39,62 @@ WORKSHEETS = {
     "guidelines": SHEET.worksheet("guidelines")
 }
 
+current_nurse_name = ""
 
-def validate_pin(entered_pin, worksheet):
+class Nurse:
+    def __init__(self, name, pin):
+        self.name = name
+        self.pin = pin
+
+def get_nurses_from_sheet():
+    """
+    Retrieve nurse data from the nurse_pin worksheet
+    """
+    records = WORKSHEETS["nurse_pin"].get_all_records()
+    nurses = []
+    for record in records:
+        name = record.get('nurse_name', 'Unknown')
+        pin = str(record.get('nurse_pin', ''))  
+        nurses.append(Nurse(name, pin))
+    return nurses
+
+def validate_pin(entered_pin, nurses):
     """
     Validation check of the pin to gain access into the system.
-    Returns the nurses name if the PIN is valid, None otherwise.
+    Returns the nurse object if the PIN is valid, None otherwise.
     """
-    pin_data = worksheet.get_all_values()[1:]
-    for row in pin_data:
-        if row [1] == entered_pin:
-            nurse_name = row[0]
-            logging.info(
-        f"PIN validation successful for nurse: {nurse_name}")
-        return nurse_name
+    for nurse in nurses:
+        if nurse.pin == entered_pin:
+            logging.info(f"PIN validation successful for nurse: {nurse.name}")
+            return nurse
     logging.info("Pin validation failed")
-    return None    
-
+    return None
 
 def get_login(max_attempts=3):
     """
     Login required to enable system to start, and an added safety measure
     for the BTM safe. Allows up to 3 login attempts.
     """
+    nurses = get_nurses_from_sheet()
+    
+
+    if not nurses:
+        logging.error("Failed to retrieve nurse data from the sheet.")
+        print("System error: Unable to access nurse data. Please contact support.")
+        return None
+
     attempts = 0
     while attempts < max_attempts:
         logging.info(f"Login attempt {attempts + 1} of {max_attempts}")
         print(f"\nAttempt {attempts + 1} of {max_attempts}")
         print("Please enter the 4 number pin to start the program.")
         print("Watch for spaces between numbers\n")
-        data_str = input("Enter your pin here: ")
-        nurse_name = validate_pin(data_str, WORKSHEETS["nurse_pin"])
-        if nurse_name:
-            logging.info(f"Login successful for nurse: {nurse_name}")
-            print(f"\nWelcome, {nurse_name}!")
-            return nurse_name
+        entered_pin = input("Enter your pin here: ").strip()
+        nurse = validate_pin(entered_pin, nurses)
+        if nurse:
+            print(f"\nWelcome, {nurse.name}!")
+            return nurse.name
         else:
-            logging.warning("Invalid PIN entry")
             print("Invalid pin entry, please try again .. \n")
         attempts += 1
     logging.error("Maximum login attempts reached. Access denied.")
@@ -105,7 +127,7 @@ Patient with ID {self.patient_id},
 Name {self.patient_name}
 Surname {self.patient_surname}, 
 Date of Birth {self.patient_birthdate},
-Room {self.room_bed_number}"
+Room {self.room_bed_number}
         """
 
 
@@ -131,12 +153,17 @@ def display_patient_menu():
 
 def search_patient(patients):
     search_term = input("Enter patient surname to search: ").lower()
-    found_patients = [p for p in patients if search_term in p.patient_surname.lower()]
+    found_patients = [
+        p for p in patients if search_term in p.patient_surname.lower()
+    ]
     
     if not found_patients:
         print("No patients found with that surname.")
         return None
-
+    """
+    If multiple patients with same surname, and first name
+    the unique Hospital ID would be enabled to get target Patient
+    """
     if len(found_patients) == 1:
         selected_patient = found_patients[0]
         print(f"Selected patient: {selected_patient.description()}")
@@ -147,8 +174,12 @@ def search_patient(patients):
             print(f"ID: {patient.patient_id} - {patient.description()}")
         
         while True:
-            patient_id = input("Enter the Patient ID of the patient you want to select: ")
-            selected_patient = next((p for p in found_patients if p.patient_id == patient_id), None)
+            patient_id = input(
+                "Enter the Patient ID of the patient you want to select: "
+            )
+            selected_patient = next(
+                (p for p in found_patients if p.patient_id == patient_id), None
+            )
             if selected_patient:
                 print(f"Selected patient: {selected_patient.description()}")
                 return selected_patient
@@ -158,14 +189,13 @@ def search_patient(patients):
     return None
 
 
-
 def add_new_patient(worksheet):
     """To add new Patients to the list."""
     patient_id = input("Enter patient ID: ")
     patient_name = input("Enter patient's name: ")
     patient_surname = input("Enter patient's surname: ")
     patient_birthdate = input("Enter patient's birthdate (DD-MM-YYYY): ")
-    patient_room_bed_number = input("Enter the room number (XXX): ")
+    patient_room_bed_number = input("Enter the room number: ")
     new_patient = PatientInformation(
         patient_id, patient_name, patient_surname, patient_birthdate,
         patient_room_bed_number
@@ -389,6 +419,8 @@ def administer_medication(patients, medications, nurse_name):
     Entering the Patients surname, medication name, authorising nurse
     and amount here required.
     """
+    administer_medication(patients, medications, nurse_name)
+    nurse_name = (validate_pin, "{nurse_name}!")
     patient_surname = input("Enter patient surname(lowercase only): ")
     found_patients = [
         p for p in patients if patient_surname.lower()
@@ -440,7 +472,7 @@ def administer_medication(patients, medications, nurse_name):
         
         while True:
             try:
-                med_choice = int(input("Enter the medication number: ")) - 1
+                med_choice = int(input("Enter the medication number:" )) - 1
                 if 0 <= med_choice < len(matching_medications):
                     selected_medication = matching_medications[med_choice]
                     break
@@ -457,11 +489,13 @@ def administer_medication(patients, medications, nurse_name):
     
     Patient Firstname: {selected_patient.patient_name},
     Patient Surname: {selected_patient.patient_surname}
-    
     """
     )
 
-    log_administration(selected_patient, selected_medication, quantity)
+
+    log_administration(
+        selected_patient, selected_medication, quantity, nurse_name
+    )
 
 
 def log_administration(patient, medication, quantity):
@@ -479,38 +513,45 @@ def log_administration(patient, medication, quantity):
 
 
 def main():
-    logging.info("Application started")
-    if get_login():
-        logging.info("Access granted. Proceeding with the application.")
-        print("Access granted. Proceeding with the application... \n")
-        while True:
-            print("\nMain Menu:")
-            print("1. Patient Information System")
-            print("2. Medication Inventory System")
-            print("3. Administer Medication")
-            print("4. Guidelines")
-            print("5. Exit")
-            choice = input("Enter your choice (1-5): ")
-            if choice == '1':
-                patient_information_system()
-            elif choice == '2':
-                medication_inventory_system()
-            elif choice == '3':
-                patients = get_patient_info(WORKSHEETS["patient_information"])
-                medications = get_medication_information(
-                    WORKSHEETS["inventory"]
-                )
-                administer_medication(patients, medications)
-            elif choice == '4':
-                guidelines_system()
-            elif choice == '5':
-                print("Exiting the application.")
-                break
-            else:
-                print("Invalid choice. Please try again.")
-    else:
+    global current_nurse_name
+
+    current_nurse_name = get_login()
+    if not current_nurse_name:
         logging.error("Login failed. Exiting the application.")
         print("Login failed. Exiting the application.")
+        return
+
+    logging.info("Application started")
+    logging.info
+    f"""
+    Access granted for nurse: {current_nurse_name}.
+    Proceeding with the application.
+    """
+    print("Access granted. Proceeding with the application... \n")
+
+    while True:
+        print("\nMain Menu:")
+        print("1. Patient Information System")
+        print("2. Medication Inventory System")
+        print("3. Administer Medication")
+        print("4. Guidelines")
+        print("5. Exit")
+        choice = input("Enter your choice (1-5): ")
+        if choice == '1':
+            patient_information_system()
+        elif choice == '2':
+            medication_inventory_system()
+        elif choice == '3':
+            patients = get_patient_info()
+            medications = get_medication_information()
+            administer_medication(patients, medications, current_nurse_name)
+        elif choice == '4':
+            guidelines_system()
+        elif choice == '5':
+            print("Exiting the application.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
 
 
 if __name__ == "__main__":
