@@ -292,56 +292,49 @@ def get_medication_information(worksheet):
 
 
 def medication_inventory_system():
-    """Menu for the Medication Inventory, whats in stock."""
+    """Menu for the Medication Inventory, what's in stock."""
     medications = get_medication_information(WORKSHEETS["inventory"])
     while True:
         display_medication_menu()
-        choice = input("Enter your choice (1-5): ").strip()
+        choice = input("Enter your choice (1-4): ").strip()
         if choice == '1':
             display_all_medications(medications)
         elif choice == '2':
             search_medication(medications)
         elif choice == '3':
-            new_med = add_new_medication(WORKSHEETS["inventory"])
-            medications.append(new_med)
-        elif choice == '4':
             update_existing_medication(WORKSHEETS["inventory"], medications)
-        elif choice == '5':
+        elif choice == '4':
             break
         else:
             print("Invalid choice. Please try again.")
 
 
 def display_all_medications(medications):
+    """To show all present medication in stock"""
     print("\nAll Medications in Inventory:")
     for med in medications:
-        print(med.description())
-        print("-" * 40)
+        print(f"{med.medication_name} - Stock: {med.quantity_in_stock}")
 
 
 def display_medication_menu():
-    """Medication Menu."""
+    """Medication Menu"""
     print("\nMedication Inventory Menu:")
-    print("1. View all Medications")
-    print("2. Search for a Medication")
-    print("3. Add a new Medication")
-    print("4. Update existing Medication")
-    print("5. Return to the main menu")
+    print("1. Display all medications")
+    print("2. Search for a medication")
+    print("3. Update medication stock")
+    print("4. Exit")
 
 
 def search_medication(medications):
-    """Searching Menu to find the neccessary Medication."""
-    search_term = input(
-        "Enter medication name to search:"
-    ).strip().lower()
+    """Searching through medication"""
+    search_term = input("Enter medication name to search: ").strip().lower()
     matching_medications = [
-        med for med in medications if search_term in m.medication_name.lower()
+        med for med in medications if search_term in med.medication_name.lower()
     ]
     if matching_medications:
         print("\nMatching Medications:")
-        for med in found_medications:
-            print(med.description())
-            print("-" * 40)
+        for med in matching_medications:
+            print(f"{med.medication_name} - Stock: {med.quantity_in_stock}")
     else:
         print("No matching medications found.")
 
@@ -394,63 +387,36 @@ def update_existing_medication(worksheet, medications):
     
     print("Matching medications:")
     for idx, med in enumerate(matching_medications, start=1):
-        print(f"{idx}.")
-        print(med.description())
-        print("-" * 40) 
+        print(f"{idx}. {med.medication_name} - Current stock: {med.quantity_in_stock}")
     
     while True:
         try:
-            med_choice = int(input(
-                "Enter the number of the medication to update: ").strip()
-            ) - 1
+            med_choice = int(input("Enter the number of the medication to update: ").strip()) - 1
             if 0 <= med_choice < len(matching_medications):
                 selected_medication = matching_medications[med_choice]
                 break
             else:
-                print(f"""
-                Invalid selection. Please enter a number between 1 and {
-                    len(matching_medications)
-                }
-                """
-                )
-
+                print(f"Invalid selection. Please enter a number between 1 and {len(matching_medications)}.")
         except ValueError:
             print("Please enter a valid number.")
     
-    """Update the selected medication"""
-    selected_medication.quantity_in_stock = int(input(
-        f"Enter new quantity in stock for {selected_medication.medication_name}: "
-        ).strip()
-    )
-    selected_medication.reorder_level = int(input(
-        f"Enter new reorder level for {selected_medication.medication_name}: "
-        ).strip()
-    )
-    selected_medication.last_ordered_date = input(
-    f"Enter new last ordered date (DD-MM-YYYY) for {
-        selected_medication.medication_name
-    }: "
-    ).strip()
-    selected_medication.in_stock = input(
-        f"Is it in stock? (yes/no): "
-    ).strip().lower() == 'yes'
+    new_stock = int(input(f"Enter the quantity of new stock for {selected_medication.medication_name}: ").strip())
+    selected_medication.quantity_in_stock += new_stock
+    selected_medication.last_ordered_date = datetime.now().strftime("%d-%m-%Y")
     
-    """Update the worksheet"""
+    """Worksheet Update"""
     inventory_data = worksheet.get_all_records()
     for idx, row in enumerate(inventory_data, start=2):  
-        if row['Medication name'] == selected_medication.medication_name
-        and row['Strength'] == selected_medication.strength
-        and row['form'] == selected_medication.form:
-            worksheet.update(f"D{idx}", selected_medication.quantity_in_stock)
-            worksheet.update(f"E{idx}", selected_medication.reorder_level)
-            worksheet.update(f"F{idx}", selected_medication.last_ordered_date)
-            worksheet.update(
-                f"G{idx}", 'yes' if selected_medication.in_stock else 'no'
-            )
+        if row['Medication name'] == selected_medication.medication_name:
+            current_values = worksheet.row_values(idx)
+            
+            current_values[3] = selected_medication.quantity_in_stock 
+            current_values[5] = selected_medication.last_ordered_date 
+            worksheet.update(values=[current_values], range_name=f"A{idx}:G{idx}")
             break
     
-    print("Medication updated successfully:")
-    print(selected_medication.description())
+    print("Medication stock updated successfully:")
+    print(f"{selected_medication.medication_name} - New stock level: {selected_medication.quantity_in_stock}")
 
 
 class MatchingPatientsWithMedication:
@@ -590,7 +556,7 @@ def administer_medication(patients, medications, nurse_name):
                     print("Invalid selection. Please try again.")
             except ValueError:
                 print("Please enter a valid number.")
-
+    
     while True:
         try:
             quantity = int(input("Enter the quantity to administer: ").strip())
