@@ -40,3 +40,112 @@
 20-07-2024 15:20:33 - Application started
 20-07-2024 15:20:33 - Login attempt 1 of 3
 20-07-2024 15:27:08 - Application terminated by user.
+20-07-2024 19:58:05 - Application started
+20-07-2024 19:58:05 - Login attempt 1 of 3
+20-07-2024 19:58:09 - PIN validation attempt: Success
+20-07-2024 19:58:09 - Login successful
+20-07-2024 19:58:09 - Access granted. Proceeding with the application.
+20-07-2024 19:58:28 - An unexpected error occurred: 'tuple' object has no attribute 'lower'
+20-07-2024 20:05:36 - Application started
+20-07-2024 20:05:36 - Login attempt 1 of 3
+20-07-2024 20:05:41 - PIN validation attempt: Success
+20-07-2024 20:05:41 - Login successful
+20-07-2024 20:05:41 - Access granted. Proceeding with the application.
+20-07-2024 20:05:44 - An unexpected error occurred: list index out of range
+20-07-2024 20:06:05 - Application started
+20-07-2024 20:06:05 - Login attempt 1 of 3
+20-07-2024 20:06:10 - PIN validation attempt: Success
+20-07-2024 20:06:10 - Login successful
+20-07-2024 20:06:10 - Access granted. Proceeding with the application.
+20-07-2024 20:06:14 - An unexpected error occurred: list index out of range
+20-07-2024 20:07:07 - Application started
+20-07-2024 20:07:07 - Login attempt 1 of 3
+20-07-2024 20:07:10 - PIN validation attempt: Success
+20-07-2024 20:07:10 - Login successful
+20-07-2024 20:07:10 - Access granted. Proceeding with the application.
+20-07-2024 20:07:20 - An unexpected error occurred: 'tuple' object has no attribute 'lower'
+20-07-2024 20:08:00 - Application started
+20-07-2024 20:08:00 - Login attempt 1 of 3
+20-07-2024 20:08:04 - PIN validation attempt: Success
+20-07-2024 20:08:04 - Login successful
+20-07-2024 20:08:04 - Access granted. Proceeding with the application.
+20-07-2024 20:08:12 - An unexpected error occurred: 'tuple' object is not callable
+20-07-2024 20:14:47 - Application started
+20-07-2024 20:14:47 - Login attempt 1 of 3
+20-07-2024 20:14:50 - PIN validation attempt: Success
+20-07-2024 20:14:50 - Login successful
+20-07-2024 20:14:50 - Access granted. Proceeding with the application.
+20-07-2024 20:16:20 - Application terminated by user.
+20-07-2024 20:16:29 - Application started
+20-07-2024 20:16:29 - Login attempt 1 of 3
+20-07-2024 20:16:32 - PIN validation attempt: Success
+20-07-2024 20:16:32 - Login successful
+20-07-2024 20:16:32 - Access granted. Proceeding with the application.
+20-07-2024 20:19:34 - Application terminated by user.
+20-07-2024 20:19:42 - Application started
+20-07-2024 20:19:42 - Login attempt 1 of 3
+20-07-2024 20:19:46 - PIN validation attempt: Success
+20-07-2024 20:19:46 - Login successful
+20-07-2024 20:19:46 - Access granted. Proceeding with the application.
+20-07-2024 20:23:47 - Application terminated by user.
+20-07-2024 20:23:56 - Application started
+20-07-2024 20:23:56 - Login attempt 1 of 3
+20-07-2024 20:24:01 - PIN validation attempt: Success
+20-07-2024 20:24:01 - Login successful
+20-07-2024 20:24:01 - Access granted. Proceeding with the application.
+20-07-2024 20:26:39 - An unexpected error occurred: name 'guidelines_system' is not defined
+20-07-2024 20:27:03 - Application started
+20-07-2024 20:27:03 - Login attempt 1 of 3
+20-07-2024 20:27:06 - PIN validation attempt: Success
+20-07-2024 20:27:06 - Login successful
+20-07-2024 20:27:06 - Access granted. Proceeding with the application.
+20-07-2024 20:28:05 - An unexpected error occurred: name 'update_existing_medication' is not defined
+20-07-2024 20:28:22 - Application started
+20-07-2024 20:28:22 - Login attempt 1 of 3
+20-07-2024 20:28:25 - PIN validation attempt: Success
+20-07-2024 20:28:25 - Login successful
+20-07-2024 20:28:25 - Access granted. Proceeding with the application.
+20-07-2024 20:28:39 - Application started
+20-07-2024 20:28:39 - Login attempt 1 of 3
+20-07-2024 20:28:42 - PIN validation attempt: Success
+20-07-2024 20:28:42 - Login successful
+20-07-2024 20:28:42 - Access granted. Proceeding with the application.
+20-07-2024 20:46:01 - Application terminated by user.
+20-07-2024 20:46:17 - Application started
+20-07-2024 20:46:17 - Login attempt 1 of 3
+20-07-2024 20:46:20 - An unexpected error occurred: Worksheet.col_values() missing 1 required positional argument: 'col'
+20-07-2024 20:48:56 - Application started
+20-07-2024 20:48:56 - Login attempt 1 of 3
+20-07-2024 20:48:59 - PIN validation successful for nurse: Lucy
+20-07-2024 20:48:59 - Login successful for nurse: Lucy
+20-07-2024 20:48:59 - Access granted. Proceeding with the application.
+20-07-2024 20:49:09 - Application terminated by user.
+20-07-2024 20:49:19 - Application started
+20-07-2024 20:49:19 - Login attempt 1 of 3
+20-07-2024 20:49:21 - PIN validation successful for nurse: Lucy
+20-07-2024 20:49:21 - Login successful for nurse: Lucy
+20-07-2024 20:49:21 - Access granted. Proceeding with the application.
+20-07-2024 20:58:26 - Application terminated by user.
+20-07-2024 20:58:32 - Application started
+20-07-2024 20:58:32 - Login attempt 1 of 3
+20-07-2024 20:58:35 - PIN validation successful for nurse: Lucy
+20-07-2024 20:58:35 - Login successful for nurse: Lucy
+20-07-2024 20:58:35 - Access granted. Proceeding with the application.
+20-07-2024 20:59:52 - Application terminated by user.
+20-07-2024 21:00:03 - Application started
+20-07-2024 21:00:03 - Login attempt 1 of 3
+20-07-2024 21:00:06 - PIN validation successful for nurse: Lucy
+20-07-2024 21:00:06 - Login successful for nurse: Lucy
+20-07-2024 21:00:06 - Access granted. Proceeding with the application.
+20-07-2024 21:10:16 - Application terminated by user.
+20-07-2024 21:10:25 - Application started
+20-07-2024 21:10:25 - Login attempt 1 of 3
+20-07-2024 21:10:27 - PIN validation successful for nurse: Lucy
+20-07-2024 21:10:27 - Login successful for nurse: Lucy
+20-07-2024 21:10:27 - Access granted. Proceeding with the application.
+20-07-2024 21:10:33 - An unexpected error occurred: administer_medication() missing 1 required positional argument: 'nurse_name'
+21-07-2024 06:53:24 - Application started
+21-07-2024 06:53:24 - Login attempt 1 of 3
+21-07-2024 06:53:28 - PIN validation successful for nurse: Lucy
+21-07-2024 06:53:28 - Login successful for nurse: Lucy
+21-07-2024 06:53:28 - Access granted. Proceeding with the application.

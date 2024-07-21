@@ -39,14 +39,19 @@ WORKSHEETS = {
 
 
 def validate_pin(entered_pin, worksheet):
-    """Validation check of the pin to gain access into the system."""
-    pin_data = worksheet.col_values(2)[1:]
-    logging.info(
-        f"PIN validation attempt: {
-            'Success' if entered_pin in pin_data else 'Failure'
-        }"
-    )
-    return entered_pin in pin_data
+    """
+    Validation check of the pin to gain access into the system.
+    Returns the nurses name if the PIN is valid, None otherwise.
+    """
+    pin_data = worksheet.get_all_values()[1:]
+    for row in pin_data:
+        if row [1] == entered_pin:
+            nurse_name = row[0]
+            logging.info(
+        f"PIN validation successful for nurse: {nurse_name}")
+        return nurse_name
+    logging.info("Pin validation failed")
+    return None    
 
 
 def get_login(max_attempts=3):
@@ -61,16 +66,18 @@ def get_login(max_attempts=3):
         print("Please enter the 4 number pin to start the program.")
         print("Watch for spaces between numbers\n")
         data_str = input("Enter your pin here: ")
-        if validate_pin(data_str, WORKSHEETS["nurse_pin"]):
-            logging.info("Login successful")
-            return True
+        nurse_name = validate_pin(data_str, WORKSHEETS["nurse_pin"])
+        if nurse_name:
+            logging.info(f"Login successful for nurse: {nurse_name}")
+            print(f"\nWelcome, {nurse_name}!")
+            return nurse_name
         else:
             logging.warning("Invalid PIN entry")
             print("Invalid pin entry, please try again .. \n")
         attempts += 1
     logging.error("Maximum login attempts reached. Access denied.")
     print("Maximum login attempts reached. Access denied.")
-    return False
+    return None
 
 
 class PatientInformation:
@@ -78,29 +85,27 @@ class PatientInformation:
     Patient Information Class
     """
     def __init__(
-        self, patient_id, 
+        self, 
+        patient_id, 
         patient_name,
         patient_surname,
         patient_birthdate,
         room_bed_number
     ):
-        self.patient_id = patient_id,
-        self.patient_name = patient_name,
-        self.patient_surname = patient_surname,
-        self.patient_birthdate = patient_birthdate,
+        self.patient_id = patient_id
+        self.patient_name = patient_name
+        self.patient_surname = patient_surname
+        self.patient_birthdate = patient_birthdate
         self.room_bed_number = room_bed_number
 
 
     def description(self):
         return f"""
 Patient with ID {self.patient_id}, 
-
 Name {self.patient_name}
-
 Surname {self.patient_surname}, 
-
+Date of Birth {self.patient_birthdate},
 Room {self.room_bed_number}"
-
         """
 
 
@@ -109,7 +114,9 @@ def get_patient_info(worksheet):
     patients = []
     data = worksheet.get_all_values()[1:]
     for row in data:
-        patient = PatientInformation(row[0], row[1], row[2], row[3], row[4])
+        patient = PatientInformation(
+            row[0], row[1], row[2], row[3], row[4]
+        )
         patients.append(patient)
     return patients
 
@@ -123,20 +130,33 @@ def display_patient_menu():
 
 
 def search_patient(patients):
-    """
-    To be able to search for patients through
-    Patient ID, Patient Name, Patient Birthdate.
-    """
-    search_term = input("Enter patient ID or name to search: ").lower()
-    found_patients = [
-        p for p in patients if search_term in p.patient_id.lower(),
-        or search_term in p.patient_name.lower()
-    ]
-    if found_patients:
-        for patient in found_patients:
-            print(patient.description())
+    search_term = input("Enter patient surname to search: ").lower()
+    found_patients = [p for p in patients if search_term in p.patient_surname.lower()]
+    
+    if not found_patients:
+        print("No patients found with that surname.")
+        return None
+
+    if len(found_patients) == 1:
+        selected_patient = found_patients[0]
+        print(f"Selected patient: {selected_patient.description()}")
+        return selected_patient
     else:
-        print("No matching patients found.")
+        print("\nMultiple patients found. Please select:")
+        for patient in found_patients:
+            print(f"ID: {patient.patient_id} - {patient.description()}")
+        
+        while True:
+            patient_id = input("Enter the Patient ID of the patient you want to select: ")
+            selected_patient = next((p for p in found_patients if p.patient_id == patient_id), None)
+            if selected_patient:
+                print(f"Selected patient: {selected_patient.description()}")
+                return selected_patient
+            else:
+                print("Invalid Patient ID. Please try again.")
+
+    return None
+
 
 
 def add_new_patient(worksheet):
@@ -175,10 +195,12 @@ def patient_information_system():
             for patient in patients:
                 print(patient.description())
         elif choice == '2':
-            search_patient(patients)
+            selected_patient = search_patient(patients)
+            if selected_patient:
+                print("Patient selected for further actions.")
         elif choice == '3':
             add_new_patient(WORKSHEETS["patient_information"])
-            patients = get_patient_info(WORKSHEETS["patient_information"]) 
+            patients = get_patient_info(WORKSHEETS["patient_information"])
         elif choice == '4':
             break
         else:
@@ -279,7 +301,7 @@ def search_medication(medications):
         "Enter medication name or strength to search:(XX)mg "
     ).lower()
     found_medications = [
-        m for m in medications if search_term in m.medication_name.lower(),
+        m for m in medications if search_term in m.medication_name.lower()
         or search_term in m.strength.lower()
     ]
     if found_medications:
@@ -362,14 +384,14 @@ Guidelines: {self.guidelines}
             """
 
 
-def administer_medication(patients, medications):
+def administer_medication(patients, medications, nurse_name):
     """
-    Entering the Patients surname, medication name,
+    Entering the Patients surname, medication name, authorising nurse
     and amount here required.
     """
     patient_surname = input("Enter patient surname(lowercase only): ")
     found_patients = [
-        p for p in patients if patient_surname.lower(),
+        p for p in patients if patient_surname.lower()
         in p.patient_surname.lower()
     ]
     
@@ -384,22 +406,24 @@ def administer_medication(patients, medications):
         for idx, patient in enumerate(found_patients, start=1):
             print(f"{idx}. {patient.description()}")
         
-        while True:
-            try:
-                patient_choice = int(input("Enter the patient number: ")) - 1
-                if 0 <= patient_choice < len(found_patients):
-                    selected_patient = found_patients[patient_choice]
-                    break
-                else:
-                    print("Invalid selection. Please try again.")
-            except ValueError:
-                print("Please enter a valid number.")
-
-    print(f"\nSelected patient: {selected_patient.description()}")
+            while True:
+                patient_id = input(
+                    "Enter the Patient ID of the patient you want to select: "
+                )
+            selected_patient = next(
+                (p for p in found_patients if p.patient_id == patient_id), None
+            )
+            if selected_patient:
+                print(f"Selected patient: {selected_patient.description()}")
+                return selected_patient
+            else:
+                print("Invalid Patient ID. Please try again.")
+            break
+    return None
 
     medication_name = input("Enter the name of the medication required: ")
     matching_medications = [
-        m for m in medications if medication_name.lower(),
+        m for m in medications if medication_name.lower()
         in m.medication_name.lower()
     ]
 
@@ -427,13 +451,12 @@ def administer_medication(patients, medications):
 
     quantity = int(input("Enter the quantity to administer: "))
     print(f"""
-    Administering amount of: {quantity},
+    Amount: {quantity}
     
-    of: {selected_medication.medication_name}, 
+    Medication Name: {selected_medication.medication_name}
     
-    to: {selected_patient.patient_name},
-    
-    {selected_patient.patient_surname}
+    Patient Firstname: {selected_patient.patient_name},
+    Patient Surname: {selected_patient.patient_surname}
     
     """
     )
