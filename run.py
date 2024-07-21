@@ -417,52 +417,74 @@ def administer_medication(patients, medications, nurse_name):
     Entering the Patients surname, medication name, authorising nurse
     and amount here required.
     """
-    administer_medication(patients, medications, nurse_name)
-    nurse_name = (validate_pin, "{nurse_name}!")
-    patient_surname = input("Enter patient surname(lowercase only): ")
-    found_patients = [
-        p for p in patients if patient_surname.lower()
-        in p.patient_surname.lower()
-    ]
-    
-    if not found_patients:
-        print("No patients found with that surname.")
-        return
+    while True:
+        patient_surname = input(
+            "Enter patient surname (lowercase only): "
+        ).strip().lower()
+        found_patients = [
+            p for p in patients if patient_surname in p.patient_surname.lower()
+        ]
+        
+        if not found_patients:
+            print("No patients found with that surname.")
+            continue_search = input(
+                "Do you want to search again? (y/n): "
+            ).strip().lower()
+            if continue_search != 'y':
+                return
+        else:
+            break
 
     if len(found_patients) == 1:
         selected_patient = found_patients[0]
+        print(f"Selected patient: {selected_patient.description()}")
     else:
-        print("\nMultiple patients found. Please select:")
+        print("\nMultiple patients found with that surname. Please select:")
         for idx, patient in enumerate(found_patients, start=1):
             print(f"{idx}. {patient.description()}")
         
-            while True:
-                patient_id = input(
-                    "Enter the Patient ID of the patient you want to select: "
-                )
-            selected_patient = next(
-                (p for p in found_patients if p.patient_id == patient_id), None
-            )
-            if selected_patient:
-                print(f"Selected patient: {selected_patient.description()}")
-                return selected_patient
-            else:
-                print("Invalid Patient ID. Please try again.")
+        while True:
+            patient_choice = input(
+                "Enter the number of the patient you want to select: "
+                ).strip()
+            try:
+                patient_choice = int(patient_choice)
+                if 1 <= patient_choice <= len(found_patients):
+                    selected_patient = found_patients[patient_choice - 1]
+                    print(f"Selected patient: {selected_patient.description()}")
+                    break
+                else:
+                    print(f"""
+                    Invalid selection. Please enter a number between 1 and {
+                        len(found_patients)
+                    }
+                    """
+                    )
+            except ValueError:
+                print("Please enter a valid number.")
+
+    while True:
+        medication_name = input(
+            "Enter the name of the medication required: "
+        ).strip()
+        matching_medications = [
+            m for m in medications if medication_name.lower()
+            in m.medication_name.lower()
+        ]
+
+        if not matching_medications:
+            print("No matching medications found.")
+            continue_search = input(
+                "Do you want to search for another medication? (y/n): "
+                ).strip().lower()
+            if continue_search != 'y':
+                return
+        else:
             break
-    return None
-
-    medication_name = input("Enter the name of the medication required: ")
-    matching_medications = [
-        m for m in medications if medication_name.lower()
-        in m.medication_name.lower()
-    ]
-
-    if not matching_medications:
-        print("No matching medications found.")
-        return
 
     if len(matching_medications) == 1:
         selected_medication = matching_medications[0]
+        print(f"Selected medication: {selected_medication.description()}")
     else:
         print("\nMultiple medications found. Please select:")
         for idx, med in enumerate(matching_medications, start=1):
@@ -470,43 +492,62 @@ def administer_medication(patients, medications, nurse_name):
         
         while True:
             try:
-                med_choice = int(input("Enter the medication number:" )) - 1
+                med_choice = int(
+                    input("Enter the medication number: ").strip()
+                ) - 1
                 if 0 <= med_choice < len(matching_medications):
                     selected_medication = matching_medications[med_choice]
+                    print(f""""
+                    Selected medication: {
+                        selected_medication.description()
+                    }
+                    """
+                    )
                     break
                 else:
                     print("Invalid selection. Please try again.")
             except ValueError:
                 print("Please enter a valid number.")
 
-    quantity = int(input("Enter the quantity to administer: "))
+    while True:
+        try:
+            quantity = int(input("Enter the quantity to administer: ").strip())
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+
     print(f"""
-    Amount: {quantity}
-    
-    Medication Name: {selected_medication.medication_name}
-    
-    Patient Firstname: {selected_patient.patient_name},
-    Patient Surname: {selected_patient.patient_surname}
-    """
-    )
+    Summary:
+    Patient: {selected_patient.patient_name} {selected_patient.patient_surname}
+    Medication: {selected_medication.medication_name}
+    Quantity: {quantity}
+    Administering Nurse: {nurse_name}
+    """)
 
-    log_administration(
-        selected_patient, selected_medication, quantity, nurse_name
-    )
+    confirm = input("Confirm administration? (y/n): ").strip().lower()
+    if confirm == 'y':
+        log_administration(
+            selected_patient, 
+            selected_medication, 
+            quantity, 
+            nurse_name
+        )
+    else:
+        print("Administration cancelled.")
 
-
-def log_administration(patient, medication, quantity):
+def log_administration(patient, medication, quantity, nurse_name):
     log_entry = [
         datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
-        patient.patient_id,
         patient.patient_surname,
         patient.patient_name,
         medication.medication_name,
         str(quantity),
-        medication.strength
+        medication.strength,
+        nurse_name
     ]
     WORKSHEETS["medication_administration_logs"].append_row(log_entry)
     print("Administration logged successfully.\n")
+
 
 
 def main():
@@ -539,8 +580,8 @@ def main():
         elif choice == '2':
             medication_inventory_system()
         elif choice == '3':
-            patients = get_patient_info()
-            medications = get_medication_information()
+            patients = get_patient_info(WORKSHEETS["patient_information"])
+            medications = get_medication_information(WORKSHEETS["inventory"])
             administer_medication(patients, medications, current_nurse_name)
         elif choice == '4':
             guidelines_system()
