@@ -47,9 +47,7 @@ class Nurse:
         self.pin = pin
 
 def get_nurses_from_sheet():
-    """
-    Retrieve nurse data from the nurse_pin worksheet
-    """
+    """Retrieve nurse data from the nurse_pin worksheet"""
     records = WORKSHEETS["nurse_pin"].get_all_records()
     nurses = []
     for record in records:
@@ -80,7 +78,9 @@ def get_login(max_attempts=3):
 
     if not nurses:
         logging.error("Failed to retrieve nurse data from the sheet.")
-        print("System error: Unable to access nurse data. Please contact support.")
+        print(
+            "System error: Unable to access nurse data. Please contact support."
+        )
         return None
 
     attempts = 0
@@ -103,9 +103,7 @@ def get_login(max_attempts=3):
 
 
 class PatientInformation:
-    """
-    Patient Information Class
-    """
+    """Patient Information Class"""
     def __init__(
         self, 
         patient_id, 
@@ -123,11 +121,11 @@ class PatientInformation:
 
     def description(self):
         return f"""
-Patient with ID {self.patient_id}, 
-Name {self.patient_name}
-Surname {self.patient_surname}, 
-Date of Birth {self.patient_birthdate},
-Room {self.room_bed_number}
+    Patient with ID {self.patient_id}, 
+    Name {self.patient_name}
+    Surname {self.patient_surname}, 
+    Date of Birth {self.patient_birthdate},
+    Room {self.room_bed_number}
         """
 
 
@@ -265,17 +263,17 @@ class MedicationInventory:
 
     def full_details(self):
         return f"""
-List of medication in inventory, as follows: {self.medication_name}
+    List of medication in inventory, as follows: {self.medication_name}
 
-Strength: {self.strength}
+    Strength: {self.strength}
 
-Form: {self.form}
+    Form: {self.form}
 
-Quantity in stock: {self.quantity_in_stock}
+    Quantity in stock: {self.quantity_in_stock}
 
-Last ordered: {self.last_ordered_date}
+    Last ordered: {self.last_ordered_date}
 
-In stock: {'Yes' if self.in_stock else 'No'}"
+    In stock: {'Yes' if self.in_stock else 'No'}"
 
         """
 
@@ -397,20 +395,20 @@ class MatchingPatientsWithMedication:
 
         def full_details(self):
             return f"""
-Patient list, Surname:{self.patient_surname}
-First Name{self.patient_name}
+        Patient list, Surname:{self.patient_surname}
+        First Name{self.patient_name}
 
-Birthdate:{self.self.patient_birthdate}
+        Birthdate:{self.self.patient_birthdate}
 
-ID: {self.patient_id}
+        ID: {self.patient_id}
 
-Medication: {self.medication_name}
+        Medication: {self.medication_name}
 
-Quantity: {self.medication_quantity}
+        Quantity: {self.medication_quantity}
 
-Medication Dosage: {self.medication_strength}
+        Medication Dosage: {self.medication_strength}
 
-Guidelines: {self.guidelines}
+        Guidelines: {self.guidelines}
             """
 
 
@@ -491,7 +489,6 @@ def administer_medication(patients, medications, nurse_name):
     Patient Surname: {selected_patient.patient_surname}
     """
     )
-
 
     log_administration(
         selected_patient, selected_medication, quantity, nurse_name
