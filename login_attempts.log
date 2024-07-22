@@ -220,3 +220,35 @@
     Proceeding with the application.
     
 22-07-2024 20:43:08 - An unexpected error occurred: 'str' object cannot be interpreted as an integer
+22-07-2024 20:57:08 - Login attempt 1 of 3
+22-07-2024 20:57:12 - PIN validation successful for nurse: Sarah
+22-07-2024 20:57:12 - Application started
+22-07-2024 20:57:12 - 
+    Access granted for nurse: Sarah.
+    Proceeding with the application.
+    
+22-07-2024 20:57:28 - An unexpected error occurred: 'str' object cannot be interpreted as an integer
+22-07-2024 21:06:24 - Login attempt 1 of 3
+22-07-2024 21:06:31 - PIN validation successful for nurse: Jane
+22-07-2024 21:06:31 - Application started
+22-07-2024 21:06:31 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+22-07-2024 21:07:39 - An unexpected error occurred: 'Quantity in stock'
+22-07-2024 21:26:14 - Login attempt 1 of 3
+22-07-2024 21:26:18 - PIN validation successful for nurse: Jane
+22-07-2024 21:26:18 - Application started
+22-07-2024 21:26:18 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+22-07-2024 21:26:52 - An unexpected error occurred: 'Quantity in stock'
+22-07-2024 21:30:28 - Login attempt 1 of 3
+22-07-2024 21:30:33 - PIN validation successful for nurse: Sarah
+22-07-2024 21:30:33 - Application started
+22-07-2024 21:30:33 - 
+    Access granted for nurse: Sarah.
+    Proceeding with the application.
+    
+22-07-2024 21:34:59 - Application terminated by user.

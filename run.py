@@ -464,16 +464,16 @@ def update_existing_medication(worksheet, medications):
     search_term = get_non_empty_input(
         "Enter medication name to update:" , r'^[a-zA-Z\s]+$'
     ).strip().lower()
-    matching_medications = [
+    matching_meds = [
         med for med in medications 
         if search_term in med.medication_name.lower()
     ]
-    if not matching_medications:
+    if not matching_meds:
         print("No matching medications found.")
         return
     
     print("Matching medications:")
-    for idx, med in enumerate(matching_medications, start=1):
+    for idx, med in enumerate(matching_meds, start=1):
         print(f"""
             {idx}. {med.medication_name}
             Current stock: {med.quantity_in_stock}"
@@ -488,8 +488,8 @@ def update_existing_medication(worksheet, medications):
                 r'^\d+$'
                 ).strip()
             ) - 1
-            if 0 <= med_choice < len(matching_medications):
-                selected_medication = matching_medications[med_choice]
+            if 0 <= med_choice < len(matching_meds):
+                selected_med = matching_meds[med_choice]
                 break
             else:
                 print(f"""
@@ -503,10 +503,14 @@ def update_existing_medication(worksheet, medications):
     
     while True:
         try:
-            new_stock = int(get_non_empty_input(f"""
-            Enter the quantity of new stock for,
-            {selected_medication.medication_name}:
-            """).strip(), r'^[a-zA-Z\s]+$')
+            new_stock = int(
+                get_non_empty_input(
+                    f"""
+                    Enter the quantity of new stock for,
+                    {selected_medication.medication_name}:
+                    """, r'^[a-zA-Z\s]+$'
+                    ).strip()
+            )
             if new_stock < 0:
                 print("Please enter a non-negative number.")
                 continue
@@ -583,73 +587,34 @@ class MatchingPatientsWithMedication:
 def update_inventory(medication, quantity_administered):
     """Updating local Inventory on Google Sheets, after intake arrival"""
     inventory_worksheet = WORKSHEETS["inventory"]
-    inventory_data =  inventory_worksheet.get_all_records()
+    inventory_data = inventory_worksheet.get_all_records()
 
-    if row['Medication name'] == medication.medication_name:
-            current_quantity = int(row['Quantity in stock'])
-            new_quantity = current_quantity - quantity_administered
+    for idx, row in enumerate(inventory_data, start=2):
+        if row['Medication name'] == medication.medication_name:
+            try:
+                current_quantity = int(row.get('Quantity in stock', 0))
+                new_quantity = current_quantity - quantity_administered
 
-            if new_quantity < 0:
-                print(
-                    f"""
-                    Error: Not enough {
-                        medication.medication_name
-                    } in stock.
+                if new_quantity < 0:
+                    print(f"""
+                    Error: Not enough {medication.medication_name} in stock.
                     Current stock: {current_quantity}
-                """
-                )
-                return False
+                    """)
+                    return False
 
                 medication.quantity_in_stock = new_quantity
-            inventory_worksheet.update(
-                f"D{idx}", new_quantity
-            )
+                inventory_worksheet.update(f"D{idx}", new_quantity)
 
-            print(
-                f"Inventory updated. New quantity for "
-                f"{medication.medication_name}: {new_quantity}"
-            )
-            return True
+                print(f"Inventory updated. New quantity for ",              
+                        f"{medication.medication_name}: {new_quantity}")
+                return True
             
-
-            print(f"""
-            Error: {medication.medication_name} not found in inventory.
-            """
-            )
-    return False
-
-    if len(found_patients) == 1:
-        selected_patient = found_patients[0]
-        print(f"Selected patient: {selected_patient.description()}")
-    else:
-        print("\nMultiple patients found with that surname." 
-        "Please select:"
-        )
-        for idx, patient in enumerate(found_patients, start=1):
-            print(f"{idx}. {patient.description()}")
-        
-        while True:
-            try:
-                patient_choice = int(get_non_empty_input(
-                "Enter the number of the patient you want to select:",
-                r'^\d+$'
-                ).strip()) - 1
-                if 0 <= patient_choice < len(found_patients):
-                    selected_patient = found_patients[patient_choice]
-                    print(f"""
-                    Selected patient: {selected_patient.description()}
-                    """
-                    )
-                    break
-                else:
-                    print(f"""
-                    Invalid selection. Please enter a number between 1 and {
-                        len(found_patients)
-                    }.
-                    """
-                    )
             except ValueError:
-                print("Please enter a valid number.")
+                print(f"Error: Invalid quantity in stock for {medication.medication_name}.")
+                return False
+
+    print(f"Error: {medication.medication_name} not found in inventory.")
+    return False
 
 
 def administer_medication(patients, medications, nurse_name):
@@ -695,13 +660,15 @@ def administer_medication(patients, medications, nurse_name):
             try:
                 patient_choice = int(get_non_empty_input(
                     "Enter the number of the patient you want to select:"
-                ).strip(), r'^\d+$') - 1
+                    , r'^\d+$'
+                ).strip()) - 1
                 if 0 <= patient_choice < len(found_patients):
                     selected_patient = found_patients[patient_choice]
                     print(f"""
                     Selected patient: {selected_patient.description()}
                     """
                     )
+                    return selected_patient
                     break
                 else:
                     print(
@@ -832,7 +799,9 @@ def update_inventory(medication, quantity_administered):
     for idx, row in enumerate(inventory_data, start=2):
         if row['Medication name'] == medication.medication_name:
             try:
-                current_quantity = int(row['Quantity in stock'])
+                current_quantity = int(row.get('Quantity in stock', 0))
+                new_quantity = current_quantity - quantity_administered
+
             except ValueError:
                 print(f"""
                 Error: Invalid quantity in stock for
@@ -841,8 +810,6 @@ def update_inventory(medication, quantity_administered):
                 )
                 return False
 
-            new_quantity = current_quantity - quantity_administered
-            
             if new_quantity < 0:
                 print(
                     f"""
