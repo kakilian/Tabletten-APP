@@ -154,3 +154,69 @@
 22-07-2024 15:22:44 - Application started
 22-07-2024 15:22:44 - Access granted for nurse: Jane. Proceeding with the application.
 22-07-2024 15:23:08 - An unexpected error occurred: 'Quantity in stock'
+22-07-2024 18:09:17 - Login attempt 1 of 3
+22-07-2024 18:09:26 - Pin validation failed
+22-07-2024 18:09:26 - Login attempt 2 of 3
+22-07-2024 18:09:35 - Pin validation failed
+22-07-2024 18:09:35 - Login attempt 3 of 3
+22-07-2024 18:09:39 - PIN validation successful for nurse: Beate
+22-07-2024 18:09:39 - Application started
+22-07-2024 18:09:39 - 
+    Access granted for nurse: Beate.
+    Proceeding with the application.
+    
+22-07-2024 18:28:42 - Application terminated by user.
+22-07-2024 18:29:00 - Login attempt 1 of 3
+22-07-2024 18:29:00 - An unexpected error occurred: get_non_empty_input() takes 1 positional argument but 2 were given
+22-07-2024 18:57:45 - Login attempt 1 of 3
+22-07-2024 18:57:45 - An unexpected error occurred: get_non_empty_input() takes 1 positional argument but 2 were given
+22-07-2024 19:07:14 - Login attempt 1 of 3
+22-07-2024 19:07:14 - An unexpected error occurred: get_non_empty_input() takes 1 positional argument but 2 were given
+22-07-2024 19:08:48 - Login attempt 1 of 3
+22-07-2024 19:08:48 - An unexpected error occurred: get_non_empty_input() takes 1 positional argument but 2 were given
+22-07-2024 19:18:16 - Login attempt 1 of 3
+22-07-2024 19:18:16 - An unexpected error occurred: get_non_empty_input() takes 1 positional argument but 2 were given
+22-07-2024 19:35:40 - An unexpected error occurred: get_login() missing 1 required positional argument: 'nurses'
+22-07-2024 19:36:45 - An unexpected error occurred: get_login() missing 1 required positional argument: 'nurse'
+22-07-2024 20:14:33 - Login attempt 1 of 3
+22-07-2024 20:14:33 - An unexpected error occurred: get_non_empty_input() takes 1 positional argument but 2 were given
+22-07-2024 20:21:43 - Login attempt 1 of 3
+22-07-2024 20:21:58 - PIN validation successful for nurse: Jane
+22-07-2024 20:21:58 - Application started
+22-07-2024 20:21:58 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+22-07-2024 20:23:43 - Application terminated by user.
+22-07-2024 20:23:48 - Login attempt 1 of 3
+22-07-2024 20:23:52 - PIN validation successful for nurse: Beate
+22-07-2024 20:23:52 - Application started
+22-07-2024 20:23:52 - 
+    Access granted for nurse: Beate.
+    Proceeding with the application.
+    
+22-07-2024 20:24:04 - An unexpected error occurred: 'in <string>' requires string as left operand, not tuple
+22-07-2024 20:27:07 - Login attempt 1 of 3
+22-07-2024 20:27:10 - PIN validation successful for nurse: Sarah
+22-07-2024 20:27:10 - Application started
+22-07-2024 20:27:10 - 
+    Access granted for nurse: Sarah.
+    Proceeding with the application.
+    
+22-07-2024 20:31:07 - Application terminated by user.
+22-07-2024 20:31:14 - Login attempt 1 of 3
+22-07-2024 20:31:19 - PIN validation successful for nurse: Lucy
+22-07-2024 20:31:19 - Application started
+22-07-2024 20:31:19 - 
+    Access granted for nurse: Lucy.
+    Proceeding with the application.
+    
+22-07-2024 20:32:13 - An unexpected error occurred: name 'new_patient' is not defined
+22-07-2024 20:41:45 - Login attempt 1 of 3
+22-07-2024 20:41:47 - PIN validation successful for nurse: Jane
+22-07-2024 20:41:47 - Application started
+22-07-2024 20:41:47 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+22-07-2024 20:43:08 - An unexpected error occurred: 'str' object cannot be interpreted as an integer

@@ -4,6 +4,7 @@ import logging
 from nurse import get_nurses_from_sheet, validate_pin
 import gspread
 from google.oauth2.service_account import Credentials
+import re
 from colorama import Fore, Back, Style
 
 logging.basicConfig(
@@ -35,6 +36,7 @@ WORKSHEETS = {
 }
 
 current_nurse_name = ""
+
 def welcome():
     print(f"""
         *Welcome to the Medication Administration App*
@@ -59,12 +61,22 @@ Log in to get started and provide the best care for your patients.
 
     """)
 
-def get_non_empty_input(prompt):
+
+def get_non_empty_input(prompt, pattern=None):
     while True:
         user_input = input(prompt).strip()
         if user_input:
             return user_input
         print("Input cannot be empty. Please try again.")
+
+def validate_input(prompt, pattern):
+    while True:
+        user_input = get_non_empty_input(prompt)
+        if re.match(pattern, user_input):
+            return user_input
+        print("Invalid input.")
+
+
 
 class Nurse:
     def __init__(self, name, pin):
@@ -118,7 +130,8 @@ def get_login(max_attempts=3):
         print(f"\nAttempt {attempts + 1} of {max_attempts}")
         print("Please enter the 4 number pin to start the program.")
         print("Watch for spaces between numbers\n")
-        entered_pin = get_non_empty_input("Enter your pin here:\n ").strip()
+        entered_pin = get_non_empty_input("Enter your pin here:", 
+        r'^\d{4}$').strip()
         nurse = validate_pin(entered_pin, nurses)
         if nurse:
             print(f"\nWelcome, {nurse.name}!")
@@ -182,7 +195,7 @@ def display_patient_menu():
 
 def search_patient(patients):
     patient_surname = get_non_empty_input(
-        "Enter patient surname (lowercase only): \n"
+        "Enter patient surname:", r'^[a-zA-Z\s]+$' 
     ).strip().lower()
     found_patients = [
         p for p in patients if patient_surname in p.patient_surname.lower()
@@ -204,8 +217,8 @@ def search_patient(patients):
         while True:
             try:
                 patient_choice = int(get_non_empty_input(
-                    "Enter the number of the patient you want to select: \n"
-                ).strip()) - 1
+                    "Enter the number of the patient you want to select:"
+                ).strip(), r'^\d+$') - 1
                 if 0 <= patient_choice < len(found_patients):
                     selected_patient = found_patients[patient_choice]
                     print(f"""
@@ -226,16 +239,30 @@ def search_patient(patients):
 
 
 def add_new_patient(worksheet):
-    """To add new Patients to the list."""
-    patient_id = get_non_empty_input("Enter patient ID: \n")
-    patient_name = get_non_empty_input("Enter patient's name: \n")
-    patient_surname = get_non_empty_input("Enter patient's surname: \n")
-    patient_birthdate = get_non_empty_input("Enter patient's birthdate (DD-MM-YYYY): \n")
-    patient_room_bed_number = get_non_empty_input("Enter the room number: \n")
+    patient_id = validate_input("Enter patient ID: ", r'^\d+$')
+    patient_name = validate_input(
+        "Enter patient's name: ", r'^[a-zA-Z\s]+$'
+    )
+    patient_surname = validate_input(
+        "Enter patient's surname: ", r'^[a-zA-Z\s]+$'
+    )
+    patient_birthdate = validate_input(
+        "Enter patient's birthdate (DD-MM-YYYY): ", 
+        r'^\d{2}-\d{2}-\d{4}$'
+    )
+    patient_room_bed_number = validate_input(
+        "Enter the room number (XXX): ", 
+        r'^[a-zA-Z0-9]+$'
+    )
+
     new_patient = PatientInformation(
-        patient_id, patient_name, patient_surname, patient_birthdate,
+        patient_id, 
+        patient_name, 
+        patient_surname, 
+        patient_birthdate, 
         patient_room_bed_number
     )
+    
     worksheet.append_row(
         [
             new_patient.patient_id,
@@ -256,7 +283,8 @@ def patient_information_system():
     patients = get_patient_info(WORKSHEETS["patient_information"])
     while True:
         display_patient_menu()
-        choice = get_non_empty_input("Enter your choice (1-4): \n")
+        choice = get_non_empty_input("Enter your choice (1-4):",
+        r'^[a-zA-Z0-9]+$')
         if choice == '1':
             for patient in patients:
                 print(patient.description())
@@ -334,13 +362,17 @@ def medication_inventory_system():
     medications = get_medication_information(WORKSHEETS["inventory"])
     while True:
         display_medication_menu()
-        choice = get_non_empty_input("Enter your choice (1-4): \n").strip()
+        choice = get_non_empty_input(
+            "Enter your choice (1-4): \n", r'^[a-zA-Z0-9]+$'
+        ).strip()
         if choice == '1':
             display_all_medications(medications)
         elif choice == '2':
             search_medication(medications)
         elif choice == '3':
-            update_existing_medication(WORKSHEETS["inventory"], medications)
+            update_existing_medication(
+                WORKSHEETS["inventory"], medications
+            )
         elif choice == '4':
             break
         else:
@@ -366,7 +398,7 @@ def display_medication_menu():
 def search_medication(meds):
     """Searching through medication"""
     search_term = get_non_empty_input(
-        "Enter medication name to search: \n"
+        "Enter medication name to search:", r'^[a-zA-Z\s]+$'
     ).strip().lower()
     matching_medications = [
         med for med in meds if search_term in med.medication_name.lower()
@@ -381,15 +413,25 @@ def search_medication(meds):
 
 def add_new_medication(worksheet):
     """To add new medication"""
-    medication_name = get_non_empty_input("Enter medication name: \n").strip()
-    strength = get_non_empty_input("Enter strength: \n").strip()
-    form = get_non_empty_input("Enter form: \n").strip()
-    quantity_in_stock = int(get_non_empty_input("Enter quantity in stock: \n").strip())
-    reorder_level = int(get_non_empty_input("Enter reorder level: \n").strip())
-    last_ordered_date = get_non_empty_input(
-        "Enter last ordered date (DD-MM-YYYY): \n"
+    medication_name = get_non_empty_input(
+        "Enter medication name: ", r'^[a-zA-Z\s]+$'
     ).strip()
-    in_stock = get_non_empty_input("Is it in stock? (yes/no): \n").strip().lower() == 'yes'
+    strength = get_non_empty_input(
+        "Enter strength:", r'^[a-zA-Z\s]+$'
+    ).strip()
+    form = get_non_empty_input("Enter form:", r'^[a-zA-Z\s]+$').strip()
+    quantity_in_stock = int(get_non_empty_input(
+        "Enter quantity in stock: \n").strip(), r'^\d+$'
+    )
+    reorder_level = int(get_non_empty_input(
+        "Enter reorder level:").strip(), r'^[a-zA-Z\s]+$'
+    )
+    last_ordered_date = get_non_empty_input(
+        "Enter last ordered date (DD-MM-YYYY): ", r'^\d{2}-\d{2}-\d{4}$'
+    ).strip()
+    in_stock = get_non_empty_input("Is it in stock? (yes/no):",
+    r'^(yes|no)$'
+    ).strip().lower() == 'yes'
     
     new_medication = MedicationInventory(
         medication_name, 
@@ -420,7 +462,7 @@ def add_new_medication(worksheet):
 def update_existing_medication(worksheet, medications):
     """To update stock when new stock arrives after being ordered"""
     search_term = get_non_empty_input(
-        "Enter medication name to update: \n"
+        "Enter medication name to update:" , r'^[a-zA-Z\s]+$'
     ).strip().lower()
     matching_medications = [
         med for med in medications 
@@ -442,7 +484,8 @@ def update_existing_medication(worksheet, medications):
         try:
             med_choice = int(
                 get_non_empty_input(
-                    "Enter the number of the medication to update: \n"
+                    "Enter the number of the medication to update: ",
+                r'^\d+$'
                 ).strip()
             ) - 1
             if 0 <= med_choice < len(matching_medications):
@@ -462,8 +505,8 @@ def update_existing_medication(worksheet, medications):
         try:
             new_stock = int(get_non_empty_input(f"""
             Enter the quantity of new stock for,
-            {selected_medication.medication_name}: \n
-            """).strip())
+            {selected_medication.medication_name}:
+            """).strip(), r'^[a-zA-Z\s]+$')
             if new_stock < 0:
                 print("Please enter a non-negative number.")
                 continue
@@ -549,7 +592,9 @@ def update_inventory(medication, quantity_administered):
             if new_quantity < 0:
                 print(
                     f"""
-                    Error: Not enough {medication.medication_name} in stock.
+                    Error: Not enough {
+                        medication.medication_name
+                    } in stock.
                     Current stock: {current_quantity}
                 """
                 )
@@ -577,14 +622,17 @@ def update_inventory(medication, quantity_administered):
         selected_patient = found_patients[0]
         print(f"Selected patient: {selected_patient.description()}")
     else:
-        print("\nMultiple patients found with that surname. Please select:")
+        print("\nMultiple patients found with that surname." 
+        "Please select:"
+        )
         for idx, patient in enumerate(found_patients, start=1):
             print(f"{idx}. {patient.description()}")
         
         while True:
             try:
                 patient_choice = int(get_non_empty_input(
-                "Enter the number of the patient you want to select: \n"
+                "Enter the number of the patient you want to select:",
+                r'^\d+$'
                 ).strip()) - 1
                 if 0 <= patient_choice < len(found_patients):
                     selected_patient = found_patients[patient_choice]
@@ -614,7 +662,7 @@ def administer_medication(patients, medications, nurse_name):
     # Patient selection
     while True:
         patient_surname = get_non_empty_input(
-            "Enter patient surname (lowercase only): \n"
+            "Enter patient surname:", r'^[a-zA-Z\s]+$'
         ).strip().lower()
         found_patients = [
             p for p in patients if patient_surname 
@@ -624,7 +672,7 @@ def administer_medication(patients, medications, nurse_name):
         if not found_patients:
             print("No patients found with that surname.")
             continue_search = get_non_empty_input(
-                "Do you want to search again? (y/n): \n"
+                "Do you want to search again? (y/n):", r'^(yes|no)$'
             ).strip().lower()
             if continue_search != 'y':
                 return
@@ -646,8 +694,8 @@ def administer_medication(patients, medications, nurse_name):
         while True:
             try:
                 patient_choice = int(get_non_empty_input(
-                    "Enter the number of the patient you want to select: \n"
-                ).strip()) - 1
+                    "Enter the number of the patient you want to select:"
+                ).strip(), r'^\d+$') - 1
                 if 0 <= patient_choice < len(found_patients):
                     selected_patient = found_patients[patient_choice]
                     print(f"""
@@ -657,7 +705,7 @@ def administer_medication(patients, medications, nurse_name):
                     break
                 else:
                     print(
-                        f"Invalid selection. Please enter a number between "
+                        f"Invalid selection. Please enter a number between"
                         f"1 and {len(found_patients)}."
                     )
             except ValueError:
@@ -668,7 +716,8 @@ def administer_medication(patients, medications, nurse_name):
     # Medication selection
     while True:
         medication_name = get_non_empty_input(
-            "Enter the name of the medication required: \n"
+            "Enter the name of the medication required:" ,
+            r'^[a-zA-Z\s]+$'
         ).strip()
         matching_medications = [
             m for m in medications 
@@ -678,7 +727,8 @@ def administer_medication(patients, medications, nurse_name):
         if not matching_medications:
             print("No matching medications found.")
             continue_search = get_non_empty_input(
-                "Do you want to search for another medication? (y/n): \n"
+                "Do you want to search for another medication? (y/n):",
+                r'^(yes|no)$'
             ).strip().lower()
             if continue_search != 'y':
                 return
@@ -698,7 +748,9 @@ def administer_medication(patients, medications, nurse_name):
         while True:
             try:
                 med_choice = int(
-                    get_non_empty_input("Enter the medication number: ").strip()
+                    get_non_empty_input("Enter the medication number:",
+                    r'^\d+$'
+                    ).strip()
                 ) - 1
                 if 0 <= med_choice < len(matching_medications):
                     selected_medication = matching_medications[med_choice]
@@ -718,14 +770,18 @@ def administer_medication(patients, medications, nurse_name):
     while True:
         try:
             quantity = int(
-                get_non_empty_input("Enter the quantity to administer: \n").strip()
+                get_non_empty_input(
+                    "Enter the quantity to administer:", r'^\d+$'
+                ).strip()
             )
             if quantity <= 0:
                 print("Please enter a positive number.")
                 continue
             if quantity > selected_medication.quantity_in_stock:
                 print(
-                    f"Error: Not enough {selected_medication.medication_name}"
+                    f"Error: Not enough {
+                        selected_medication.medication_name
+                    }"
                     f"in stock. Current stock: "
                     f"{selected_medication.quantity_in_stock}"
                 )
@@ -746,7 +802,9 @@ def administer_medication(patients, medications, nurse_name):
     Administering Nurse: {nurse_name}
     """)
 
-    confirm = get_non_empty_input("Confirm administration? (y/n): \n").strip().lower()
+    confirm = get_non_empty_input(
+        "Confirm administration? (y/n):", r'^(yes|no)$'
+    ).strip().lower()
     if confirm == 'y':
         if update_inventory(selected_medication, quantity):
             log_administration(
@@ -788,7 +846,9 @@ def update_inventory(medication, quantity_administered):
             if new_quantity < 0:
                 print(
                     f"""
-                    Error: Not enough {medication.medication_name} in stock. 
+                    Error: Not enough {
+                        medication.medication_name
+                    } in stock. 
                     """
                     f"Current stock: {current_quantity}"
                 )
@@ -867,7 +927,9 @@ def main():
         print("3. Administer Medication")
         print("4. Guidelines")
         print("5. Exit")
-        choice = get_non_empty_input("Enter your choice (1-5): \n").strip()
+        choice = get_non_empty_input(
+            "Enter your choice (1-5):", r'^\d+$'
+        ).strip()
         
         if choice == '1':
             patient_information_system()
@@ -900,7 +962,9 @@ def guidelines_system():
         print("1. View all Guidelines")
         print("2. Search Guidelines")
         print("3. Return to Main Menu")
-        choice = get_non_empty_input("Enter your choice (1-3): \n")
+        choice = get_non_empty_input(
+            "Enter your choice (1-3):", r'^\d+$'
+        )
         if choice == '1':
             display_all_guidelines(guidelines)
         elif choice == '2':
@@ -952,10 +1016,11 @@ def display_guideline(guideline):
 
 def search_guidelines(guidelines):
     search_term = get_non_empty_input(
-        "Enter medication name or guideline to search: "
+        "Enter medication name or guideline to search:", r'^[a-zA-Z\s]+$'
         ).lower()
     found_guidelines = [
-        g for g in guidelines if search_term in g['medication_name'].lower()
+        g for g in guidelines if search_term 
+        in g['medication_name'].lower()
     ]
     if found_guidelines:
         for guideline in found_guidelines:
@@ -970,7 +1035,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         logging.warning("Application terminated by user.")
         print(
-            "\nApplication terminated by user. Quitting the application..."
+            "\nApplication terminated by user."
+            "Quitting the application..."
         )
     except Exception as e:
         logging.error(f"An unexpected error occurred: {str(e)}")
