@@ -40,7 +40,29 @@ WORKSHEETS = {
 }
 
 current_nurse_name = ""
+def welcome():
+    print(f"""
+        **Welcome to the Medication Administration App**
 
+Effortlessly manage patient medication schedules and records. This app is designed to enhance your workflow, ensuring safe and accurate medication administration.
+
+**Buttons and Their Functions:**
+
+1. **Patients**
+   - Manage patient information and medication schedules.
+
+2. **Add Medication**
+   - Record stock intake and track medication on hand.
+
+3. **Add Nurse Details**
+   - Input new nurse information and update existing records.
+
+4. **Guidelines**
+   - Access detailed information on medication usage, timing, and symptoms.
+
+Log in to get started and provide the best care for your patients.
+
+    """)
 class Nurse:
     def __init__(self, name, pin):
         self.name = name
@@ -794,16 +816,6 @@ def main():
         else:
             print("Invalid choice. Please try again.")
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        logging.warning("Application terminated by user.")
-        print("\nApplication terminated by user. Quitting the application...")
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {str(e)}")
-        print(f"An unexpected error occurred: {str(e)}")
-
 
 def guidelines_system():
     """Menu for Opitate Medicine guidelines"""
@@ -872,3 +884,14 @@ def search_guidelines(guidelines):
             display_guideline(guideline)
     else:
         print("No matching guidelines found.")
+
+if __name__ == "__main__":
+    try:
+        welcome()
+        main()
+    except KeyboardInterrupt:
+        logging.warning("Application terminated by user.")
+        print("\nApplication terminated by user. Quitting the application...")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {str(e)}")
+        print(f"An unexpected error occurred: {str(e)}")
