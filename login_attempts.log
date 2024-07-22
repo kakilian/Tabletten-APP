@@ -149,3 +149,8 @@
 21-07-2024 06:53:28 - PIN validation successful for nurse: Lucy
 21-07-2024 06:53:28 - Login successful for nurse: Lucy
 21-07-2024 06:53:28 - Access granted. Proceeding with the application.
+22-07-2024 15:22:41 - Login attempt 1 of 3
+22-07-2024 15:22:44 - PIN validation successful for nurse: Jane
+22-07-2024 15:22:44 - Application started
+22-07-2024 15:22:44 - Access granted for nurse: Jane. Proceeding with the application.
+22-07-2024 15:23:08 - An unexpected error occurred: 'Quantity in stock'
