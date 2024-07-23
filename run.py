@@ -494,7 +494,7 @@ def update_existing_medication(worksheet, medications):
             else:
                 print(f"""
                 Invalid selection. Please enter a number between 1 and {
-                    len(matching_medications)
+                    len(matching_meds)
                 }."
                 """    
                 )
@@ -507,7 +507,7 @@ def update_existing_medication(worksheet, medications):
                 get_non_empty_input(
                     f"""
                     Enter the quantity of new stock for,
-                    {selected_medication.medication_name}:
+                    {selected_med.medication_name}:
                     """, r'^[a-zA-Z\s]+$'
                     ).strip()
             )
@@ -518,8 +518,8 @@ def update_existing_medication(worksheet, medications):
         except ValueError:
             print("Please enter a valid number.")
 
-    selected_medication.quantity_in_stock += new_stock
-    selected_medication.last_ordered_date = datetime.now(
+    selected_med.quantity_in_stock += new_stock
+    selected_med.last_ordered_date = datetime.now(
     ).strftime("%d-%m-%Y")
     
     """Worksheet Update"""
@@ -527,19 +527,19 @@ def update_existing_medication(worksheet, medications):
     for idx, row in enumerate(inventory_data, start=2):  
         if row[
             'Medication name'
-        ] == selected_medication.medication_name:
+        ] == selected_med.medication_name:
             worksheet.update(f"D{idx}",
-            selected_medication.quantity_in_stock
+            selected_med.quantity_in_stock
             )
             worksheet.update(f"F{idx}",
-            selected_medication.last_ordered_date
+            selected_med.last_ordered_date
             )
             break
     
     print("Medication stock updated successfully:")
     print(f"""
-    {selected_medication.medication_name}  
-    New stock level: {selected_medication.quantity_in_stock}
+    {selected_med.medication_name}  
+    New stock level: {selected_med.quantity_in_stock}
     """
     )
 
@@ -710,8 +710,8 @@ def administer_medication(patients, medications, nurse_name):
     print(f"Found {len(matching_medications)} matching medications")
 
     if len(matching_medications) == 1:
-        selected_medication = matching_medications[0]
-        print(f"Selected medication: {selected_medication.description()}")
+        selected_med = matching_medications[0]
+        print(f"Selected medication: {selected_med.description()}")
     else:
         print("\nMultiple medications found. Please select:")
         for idx, med in enumerate(matching_medications, start=1):
@@ -725,10 +725,10 @@ def administer_medication(patients, medications, nurse_name):
                     ).strip()
                 ) - 1
                 if 0 <= med_choice < len(matching_medications):
-                    selected_medication = matching_medications[med_choice]
+                    selected_med = matching_medications[med_choice]
                     print(
                         f"Selected medication: "
-                        f"{selected_medication.description()}"
+                        f"{selected_med.description()}"
                     )
                     break
                 else:
@@ -749,13 +749,13 @@ def administer_medication(patients, medications, nurse_name):
             if quantity <= 0:
                 print("Please enter a positive number.")
                 continue
-            if quantity > selected_medication.quantity_in_stock:
+            if quantity > selected_med.quantity_in_stock:
                 print(
                     f"Error: Not enough {
-                        selected_medication.medication_name
+                        selected_med.medication_name
                     }"
                     f"in stock. Current stock: "
-                    f"{selected_medication.quantity_in_stock}"
+                    f"{selected_med.quantity_in_stock}"
                 )
                 continue
             break
@@ -769,7 +769,7 @@ def administer_medication(patients, medications, nurse_name):
     Summary:
     Patient: {selected_patient.patient_name} 
     {selected_patient.patient_surname}
-    Medication: {selected_medication.medication_name}
+    Medication: {selected_med.medication_name}
     Quantity: {quantity}
     Administering Nurse: {nurse_name}
     """)
@@ -778,14 +778,14 @@ def administer_medication(patients, medications, nurse_name):
         "Confirm administration? (y/n):", r'^(yes|no)$'
     ).strip().lower()
     if confirm == 'y':
-        if update_inventory(selected_medication, quantity):
+        if update_inventory(selected_med, quantity):
             log_administration(
                 selected_patient, 
-                selected_medication, 
+                selected_med, 
                 quantity, 
                 nurse_name
             )
-            check_low_stock(selected_medication)
+            check_low_stock(selected_med)
         else:
             print("Administration cancelled due to inventory issues.")
     else:
