@@ -252,3 +252,92 @@
     Proceeding with the application.
     
 22-07-2024 21:34:59 - Application terminated by user.
+23-07-2024 04:54:04 - Login attempt 1 of 3
+23-07-2024 04:54:07 - 
+            PIN validation successful for nurse: Beate
+            
+23-07-2024 04:54:07 - Application started
+23-07-2024 04:54:07 - 
+    Access granted for nurse: Beate.
+    Proceeding with the application.
+    
+23-07-2024 04:54:59 - An unexpected error occurred: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "D2"
+23-07-2024 05:01:21 - Login attempt 1 of 3
+23-07-2024 05:01:24 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:01:24 - Application started
+23-07-2024 05:01:24 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:01:33 - Application terminated by user.
+23-07-2024 05:01:43 - Login attempt 1 of 3
+23-07-2024 05:01:45 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:01:45 - Application started
+23-07-2024 05:01:45 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:02:00 - An unexpected error occurred: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "D2"
+23-07-2024 05:05:40 - Login attempt 1 of 3
+23-07-2024 05:05:43 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:05:43 - Application started
+23-07-2024 05:05:43 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:06:00 - An unexpected error occurred: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "D2"
+23-07-2024 05:08:28 - Login attempt 1 of 3
+23-07-2024 05:08:31 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:08:31 - Application started
+23-07-2024 05:08:31 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:12:31 - An unexpected error occurred: 'medication'
+23-07-2024 05:17:54 - Login attempt 1 of 3
+23-07-2024 05:17:56 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:17:56 - Application started
+23-07-2024 05:17:56 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:18:06 - An unexpected error occurred: maximum recursion depth exceeded
+23-07-2024 05:18:26 - Login attempt 1 of 3
+23-07-2024 05:18:29 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:18:29 - Application started
+23-07-2024 05:18:29 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:23:19 - An unexpected error occurred: maximum recursion depth exceeded
+23-07-2024 05:23:36 - Login attempt 1 of 3
+23-07-2024 05:23:40 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:23:40 - Application started
+23-07-2024 05:23:40 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    
+23-07-2024 05:24:26 - An unexpected error occurred: APIError: [400]: Invalid value at 'data.values' (type.googleapis.com/google.protobuf.ListValue), "D2"
+23-07-2024 05:24:48 - Login attempt 1 of 3
+23-07-2024 05:24:52 - 
+            PIN validation successful for nurse: Jane
+            
+23-07-2024 05:24:52 - Application started
+23-07-2024 05:24:52 - 
+    Access granted for nurse: Jane.
+    Proceeding with the application.
+    

@@ -597,18 +597,28 @@ def update_inventory(medication, quantity_administered):
         if row['Medication name'] == medication.medication_name:
             try:
                 current_quantity = int(row.get('Quantity in stock'[1:]))
-                new_quantity = current_quantity - quantity_administered
+                new_quantity = current_quantity + quantity_administered
+
+                print(f"Debug: Current quantity: {current_quantity}")
+                print(f"""
+                Debug: Quantity administered: {quantity_administered}
+                """)
+                print(f"Debug: New quantity: {new_quantity}")
+                try:
+                    inventory_worksheet.update_cell(idx, 4, str(new_quantity))  
+                    print(f"Debug: Updated cell D{idx} with value {new_quantity}")
+                except gspread.exceptions.APIError as e:
+                    print(f"API Error while updating inventory: {e}")
+                    return False
+
+                medication.quantity_in_stock = new_quantity
 
                 print(f"""
-                Debug: Current quantity from sheet: {current_quantity}
+                Inventory updated. New quantity for {medication.medication_name}:
+                {new_quantity}
                 """)
-                print(f"""
-                Debug: Quantity in medication object: {
-                    medication.quantity_in_stock
-                }
-                """)
+                return True
 
-                new_quantity = current_quantity - quantity_administered
                 
                 if new_quantity < 0:
                     print(f"""
@@ -617,12 +627,12 @@ def update_inventory(medication, quantity_administered):
                     """)
                     return False
 
-                medication.quantity_in_stock = new_quantity
-                inventory_worksheet.update(f"D{idx}", new_quantity)
+                #medication.quantity_in_stock = new_quantity
+                #inventory_worksheet.update(f"D{idx}", new_quantity)
 
-                print(f"Inventory updated. New quantity for ",              
-                        f"{medication.medication_name}: {new_quantity}")
-                return True
+                #print(f"Inventory updated. New quantity for ",              
+                 #       f"{medication.medication_name}: {new_quantity}")
+                #return True
             
             except ValueError:
                 print(f"""
