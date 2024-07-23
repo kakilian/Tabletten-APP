@@ -296,9 +296,7 @@ def patient_information_system():
             add_new_patient(WORKSHEETS["patient_information"])
             patients = get_patient_info(WORKSHEETS["patient_information"])
         elif choice == '4':
-            break
-        else:
-            print("Invalid choice. Please try again.")
+            return None
 
 
 class MedicationInventory:
@@ -351,7 +349,7 @@ def get_medication_information(worksheet):
     for row in data:
         medication = MedicationInventory(
             row[0], row[1], row[2], row[3], row[4],
-            row[5], row[6].lower() == 'yes'
+            row[5], row[6] =='TRUE'
         )
         medications.append(medication)  
     return medications
@@ -592,9 +590,14 @@ def update_inventory(medication, quantity_administered):
     for idx, row in enumerate(inventory_data, start=2):
         if row['Medication name'] == medication.medication_name:
             try:
-                current_quantity = int(row.get('Quantity in stock', 0))
+                current_quantity = int(row.get('Quantity in stock'[1:]))
                 new_quantity = current_quantity - quantity_administered
 
+                print(f"Debug: Current quantity from sheet: {current_quantity}")
+                print(f"Debug: Quantity in medication object: {medication.quantity_in_stock}")
+
+                new_quantity = current_quantity - quantity_administered
+                
                 if new_quantity < 0:
                     print(f"""
                     Error: Not enough {medication.medication_name} in stock.
@@ -847,7 +850,7 @@ def check_low_stock(medication):
         Current stock: {medication.quantity_in_stock}.
         Reorder level: {medication.reorder_level}.
         """)
-        print("Please reorder today.")
+{Back.GREEN}print("Please reorder today."){Style.RESET_ALL}
 
 
 def log_administration(patient, medication, quantity, nurse_name):
