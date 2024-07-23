@@ -42,7 +42,7 @@ Log in to get started and provide the best care for your patients. This app is s
 
 1. Click this [link](https://animatedwaffle-63fa727753ef.herokuapp.com/) or copy this URL: `https://animatedwaffle-63fa727753ef.herokuapp.com/` and paste it in your browser's address bar.
 2. Once the page is loaded, click 'RUN PROGRAM'.
-3. Nurses can log in using a 4-digit code. Example codes: `1111`, `1234`, `9999`, `2424`.
+3. Nurses can log in using a 4-digit code. Example codes: `1111`, `1234`, `9999`or `2424`.
 4. All codes are listed in this [Google Spreadsheet](https://docs.google.com/spreadsheets/d/1SM3qQY2PKeNK9HjMXGFhc5EBsrCLNd6P1hGbmDvchVk/edit?pli=1&gid=580694856#gid=580694856).
 5. Enter one of the codes under "Enter your pin here". For example, entering `1111` logs in nurse 'Jane'.
 6. After logging in, you will see the main menu with five options. Choose an option by entering a number between 1 and 5.
@@ -120,20 +120,45 @@ Log in to get started and provide the best care for your patients. This app is s
 - Colorama ![Colorama](https://img.shields.io/badge/Colorama-0.4.6-red.svg)
 - Gitpod ![Gitpod](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)
 - GitHub ![GitHub](https://img.shields.io/badge/GitHub-Repository-181717.svg)
-- GIMP 
 - Draw.io ![Draw.io](https://img.shields.io/badge/Draw.io-Diagrams-orange.svg)
 - Heroku ![Heroku](https://img.shields.io/badge/Deployed%20on-Heroku-430098?style=for-the-badge&logo=heroku)
 
+
+
 ---
+
+## Code Style
+
+This project adheres to the [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide for Python code. The code has been checked for compliance using the [PEP8 online checker](https://pep8ci.herokuapp.com/).
+
+[![PEP8](https://img.shields.io/badge/code%20style-pep8-orange.svg)](https://www.python.org/dev/peps/pep-0008/)
+
+
 
 ## Bugs ![Bugs](https://img.shields.io/badge/Bugs-Squashed-brightgreen?style=for-the-badge&logo=bug&logoColor=white)
 
 
 ### Solved Bugs ![Killed Bugs](https://img.shields.io/badge/Killed%20Bugs-✔️-brightgreen?style=for-the-badge&logo=bugatti)
-
+- Fixed the issue with patient selection looping back to surname input instead of proceeding to medication selection.
+- Resolved the 'str' object cannot be interpreted as an integer error in the patient selection process.
+- Corrected the indentation issues in various functions, particularly in the `update_inventory` function.
+- Addressed the `APIError` related to updating inventory by ensuring proper data types and error handling.
 
 
 ### Unsolved Bugs ![Alive Bugs](https://img.shields.io/badge/Alive%20Bugs-❌-red?style=for-the-badge&logo=bugatti)
+
+- The persistent `APIError: [400] Invalid value at 'data.values'` when updating inventory, which may require further investigation of the Google Sheets API interaction.
+- Potential discrepancies between reported stock and actual stock used in calculations, which may need more debugging.
+
+
+## Future Improvements ![Future Improvements](https://img.shields.io/badge/✈️-Future%20Improvements-blue?style=for-the-badge)
+
+
+Due to the time frame, I just ran out of time to implement several ideas that would help save time for nurses and improve their working environment. These include:
+- Automated reminders for medication administration times.
+- Integration with electronic health records (EHR) for seamless data updates.
+- Enhanced user interface for quicker access to patient and medication information.
+- Real-time inventory tracking and alerts for low stock levels.
 
 
 
@@ -184,4 +209,10 @@ Log in to get started and provide the best care for your patients. This app is s
 
 - ![Love](https://img.shields.io/badge/Made%20with-❤️-ff69b4)
 My buddies on 'slack' and teachers - I so love our community 
+
+---
+
+## Final Thoughts ![Aspiring Programmer](https://img.shields.io/badge/👧-Aspiring%20Programmer-ff69b4?style=for-the-badge)
+
+I have thoroughly enjoyed the challenges that Python has brought with it. The journey of taking my 'master-plan' and bringing it to life has been both rewarding and enlightening. Python's flexibility and extensive libraries provided the perfect tools to create a robust and efficient application. Each hurdle I encountered was an opportunity to learn and grow, enhancing my problem-solving skills and deepening my understanding of programming concepts. The process of debugging and refining the code was particularly satisfying, as it allowed me to see the immediate impact of my efforts. I appreciate the freehand Python offers, enabling me to implement creative solutions and optimize the app's performance. This project has not only improved my technical skills but also reinforced the importance of perseverance and attention to detail. I am grateful for the support and resources available, which made this project a success. The experience has solidified my passion for coding and my commitment to continuous learning. I look forward to applying these skills in future projects and exploring new possibilities in the world of programming.
 
