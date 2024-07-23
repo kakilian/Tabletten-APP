@@ -15,6 +15,12 @@
 
 # Welcome to the Medication Administration App
 
+![Am I Responsive](documentation/am.i.responsive.png)
+![Run Program](documentation/enter.your.pin.png)
+![Three Attempts](documentation/three.attempts.png)
+![Welcome Jane!](documentation/welcome.note.png)
+![Multiple Surnames](documentation/multiple.pat.png)
+
 Responsive Mockup
 
 [Link to the Medication APP](https://animatedwaffle-63fa727753ef.herokuapp.com/)
@@ -123,8 +129,7 @@ Log in to get started and provide the best care for your patients. This app is s
 - Draw.io ![Draw.io](https://img.shields.io/badge/Draw.io-Diagrams-orange.svg)
 - Heroku ![Heroku](https://img.shields.io/badge/Deployed%20on-Heroku-430098?style=for-the-badge&logo=heroku)
 
-
-
+![FlowChart](documentation/simpl.drawio.png)
 ---
 
 ## Code Style
