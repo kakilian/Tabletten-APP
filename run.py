@@ -395,6 +395,7 @@ def display_medication_menu():
 
 def search_medication(meds):
     """Searching through medication"""
+    result = search_medication(meds)
     search_term = get_non_empty_input(
         "Enter medication name to search:", r'^[a-zA-Z\s]+$'
     ).strip().lower()
@@ -405,6 +406,7 @@ def search_medication(meds):
         print("\nMatching Medications:")
         for med in matching_medications:
             print(f"{med.medication_name} - Stock: {med.quantity_in_stock}")
+            return matching_medications
     else:
         print("No matching medications found.")
 
