@@ -102,7 +102,9 @@ def validate_pin(entered_pin, nurses):
     """
     for nurse in nurses:
         if nurse.pin == entered_pin:
-            logging.info(f"PIN validation successful for nurse: {nurse.name}")
+            logging.info(f"""
+            PIN validation successful for nurse: {nurse.name}
+            """)
             return nurse
     logging.info("Pin validation failed")
     return None
@@ -405,7 +407,9 @@ def search_medication(meds):
     if matching_medications:
         print("\nMatching Medications:")
         for med in matching_medications:
-            print(f"{med.medication_name} - Stock: {med.quantity_in_stock}")
+            print(f"""
+            {med.medication_name} - Stock: {med.quantity_in_stock}
+            """)
             return matching_medications
     else:
         print("No matching medications found.")
@@ -595,8 +599,14 @@ def update_inventory(medication, quantity_administered):
                 current_quantity = int(row.get('Quantity in stock'[1:]))
                 new_quantity = current_quantity - quantity_administered
 
-                print(f"Debug: Current quantity from sheet: {current_quantity}")
-                print(f"Debug: Quantity in medication object: {medication.quantity_in_stock}")
+                print(f"""
+                Debug: Current quantity from sheet: {current_quantity}
+                """)
+                print(f"""
+                Debug: Quantity in medication object: {
+                    medication.quantity_in_stock
+                }
+                """)
 
                 new_quantity = current_quantity - quantity_administered
                 
@@ -615,7 +625,11 @@ def update_inventory(medication, quantity_administered):
                 return True
             
             except ValueError:
-                print(f"Error: Invalid quantity in stock for {medication.medication_name}.")
+                print(f"""
+                Error: Invalid quantity in stock for {
+                    medication.medication_name
+                }.
+                """)
                 return False
 
     print(f"Error: {medication.medication_name} not found in inventory.")
@@ -852,14 +866,16 @@ def check_low_stock(medication):
         Current stock: {medication.quantity_in_stock}.
         Reorder level: {medication.reorder_level}.
         """)
-{Back.GREEN}print("Please reorder today."){Style.RESET_ALL}
+print(f"""
+{Back.GREEN}Please reorder today.{Style.RESET_ALL}
+""")
 
 
 def log_administration(patient, medication, quantity, nurse_name):
     """
-    Administration Log in, to keep all outgoing medication on patients, and
-    through which nurse was the opiate given. Here it will be logged under
-    'Medication Administration Logs'
+    Administration Log in, to keep all outgoing medication on patients,
+    and through which nurse was the opiate given. Here it will be
+    logged under 'Medication Administration Logs'.
     """
     log_entry = [
         datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
